@@ -1,0 +1,631 @@
+{
+  "95f18052": {
+    "id": "95f18052",
+    "materia": "fisica",
+    "tema": "termodinamica",
+    "semanas": 2,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de Termodinámica",
+      "descripcion": "Plan introductorio de 14 días para principiantes que cubre conceptos fundamentales de termodinámica, incluyendo temperatura, calor, leyes de la termodinámica y aplicaciones básicas.",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción a la termodinámica y temperatura",
+          "objetivos": [
+            "Comprender qué es la termodinámica",
+            "Diferenciar entre temperatura y calor",
+            "Aprender escalas de temperatura"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Conceptos básicos de termodinámica, definición de temperatura, escalas Celsius, Fahrenheit y Kelvin, y medición con termómetros."
+        },
+        {
+          "dia": 2,
+          "titulo": "Calor y transferencia de energía",
+          "objetivos": [
+            "Definir calor como transferencia de energía",
+            "Identificar mecanismos de transferencia de calor",
+            "Calcular calor específico"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Concepto de calor, diferencia entre calor y temperatura, conducción, convección y radiación, y calor específico de materiales."
+        },
+        {
+          "dia": 3,
+          "titulo": "Práctica: Temperatura y calor",
+          "objetivos": [
+            "Resolver problemas de conversión de temperatura",
+            "Calcular transferencia de calor básica",
+            "Aplicar fórmula Q = mcΔT"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios de conversión entre escalas térmicas, cálculos de calor ganado/perdido y problemas con calor específico."
+        },
+        {
+          "dia": 4,
+          "titulo": "Primera ley de la termodinámica",
+          "objetivos": [
+            "Comprender el principio de conservación de energía",
+            "Definir energía interna, trabajo y calor",
+            "Aplicar ΔU = Q - W"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Introducción a la primera ley, energía interna de sistemas, trabajo termodinámico y relación entre calor, trabajo y energía interna."
+        },
+        {
+          "dia": 5,
+          "titulo": "Mini prueba y repaso",
+          "objetivos": [
+            "Evaluar comprensión de conceptos iniciales",
+            "Reforzar temperatura, calor y primera ley"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 40,
+          "resumen": "Prueba corta de 20 minutos sobre los primeros temas, seguida de revisión de respuestas y aclaración de dudas."
+        },
+        {
+          "dia": 6,
+          "titulo": "Descanso activo: Aplicaciones cotidianas",
+          "objetivos": [
+            "Identificar termodinámica en la vida diaria",
+            "Relacionar conceptos con experiencias personales"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 30,
+          "resumen": "Actividad ligera: observar ejemplos de termodinámica en el hogar (refrigerador, cocina, clima) y reflexionar sobre ellos."
+        },
+        {
+          "dia": 7,
+          "titulo": "Segunda ley de la termodinámica",
+          "objetivos": [
+            "Comprender la dirección de los procesos naturales",
+            "Introducir entropía",
+            "Entender máquinas térmicas"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Enunciados de Kelvin-Planck y Clausius, concepto de entropía como desorden, irreversibilidad de procesos y eficiencia de máquinas."
+        },
+        {
+          "dia": 8,
+          "titulo": "Práctica: Primera y segunda ley",
+          "objetivos": [
+            "Resolver problemas con la primera ley",
+            "Calcular trabajo en procesos simples",
+            "Entender límites de eficiencia"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios aplicando ΔU = Q - W, cálculos de trabajo en expansión/compresión, y problemas conceptuales sobre segunda ley."
+        },
+        {
+          "dia": 9,
+          "titulo": "Gas ideal y procesos termodinámicos",
+          "objetivos": [
+            "Conocer la ley de los gases ideales",
+            "Identificar procesos isotérmicos, isobáricos, etc.",
+            "Representar procesos en diagramas PV"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Ecuación PV = nRT, procesos termodinámicos básicos (isotérmico, isobárico, isocórico, adiabático) y su representación gráfica."
+        },
+        {
+          "dia": 10,
+          "titulo": "Repaso general",
+          "objetivos": [
+            "Integrar todos los conceptos vistos",
+            "Prepararse para evaluación parcial"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 50,
+          "resumen": "Revisión completa de temperatura, calor, leyes de termodinámica y gases ideales, con énfasis en conexiones entre temas."
+        },
+        {
+          "dia": 11,
+          "titulo": "Evaluación parcial",
+          "objetivos": [
+            "Evaluar comprensión global de la primera mitad",
+            "Identificar áreas que necesitan refuerzo"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 60,
+          "resumen": "Examen que cubre todos los temas desde el día 1 hasta el día 9, con preguntas teóricas y problemas prácticos."
+        },
+        {
+          "dia": 12,
+          "titulo": "Ciclos termodinámicos y máquinas",
+          "objetivos": [
+            "Comprender ciclos como el de Carnot",
+            "Calcular eficiencia de máquinas térmicas",
+            "Entender refrigeradores"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Ciclo de Carnot como límite ideal, eficiencia máxima, máquinas térmicas vs. refrigeradores, y coeficiente de rendimiento."
+        },
+        {
+          "dia": 13,
+          "titulo": "Práctica final integradora",
+          "objetivos": [
+            "Aplicar todos los conceptos aprendidos",
+            "Resolver problemas complejos integrados"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Problemas que combinan múltiples conceptos: gases ideales con leyes de termodinámica, cálculos de eficiencia y transferencia de calor."
+        },
+        {
+          "dia": 14,
+          "titulo": "Repaso final y cierre",
+          "objetivos": [
+            "Consolidar el aprendizaje",
+            "Reflexionar sobre aplicaciones futuras"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 45,
+          "resumen": "Revisión de puntos clave del curso, resolución de dudas finales, y discusión sobre cómo continuar aprendiendo termodinámica."
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 5,
+          "descripcion": "Mini prueba de mitad de primera semana"
+        },
+        {
+          "dia": 7,
+          "descripcion": "Primera evaluación parcial"
+        },
+        {
+          "dia": 11,
+          "descripcion": "Evaluación parcial completa"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 0,
+            "respuesta": "b) La temperatura mide la energía total, el calor mide qué tan caliente está",
+            "correcto": false,
+            "timestamp": 1773326078.602421
+          },
+          {
+            "ejercicio": 1,
+            "respuesta": "98.6 °F = 37 °C, que corresponde aproximadamente a la temperatura corporal normal.",
+            "correcto": true,
+            "timestamp": 1773326247.16803
+          }
+        ]
+      },
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773325859.5837424,
+    "ultimo_acceso": 1773326247.171916
+  },
+  "3ae69f3b": {
+    "id": "3ae69f3b",
+    "materia": "japones",
+    "tema": "kanji",
+    "semanas": 2,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de Kanji para principiantes",
+      "descripcion": "Plan de 14 días para introducir 60 kanji básicos, enfocado en reconocimiento, escritura y vocabulario inicial",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción a los kanji y primeros trazos",
+          "objetivos": [
+            "Comprender qué son los kanji",
+            "Aprender 5 kanji básicos de números",
+            "Practicar trazos fundamentales"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Introducción conceptual a los kanji, aprendizaje de 一 (uno), 二 (dos), 三 (tres), 十 (diez), 口 (boca) con sus trazos básicos"
+        },
+        {
+          "dia": 2,
+          "titulo": "Kanji de elementos naturales",
+          "objetivos": [
+            "Aprender 5 kanji relacionados con naturaleza",
+            "Practicar orden de trazos",
+            "Crear tarjetas de estudio"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Estudio de 山 (montaña), 川 (río), 木 (árbol), 火 (fuego), 水 (agua) con ejercicios de escritura y asociación visual"
+        },
+        {
+          "dia": 3,
+          "titulo": "Kanji de personas y direcciones",
+          "objetivos": [
+            "Aprender 5 kanji de personas y posiciones",
+            "Practicar lectura On y Kun",
+            "Revisar kanji de días anteriores"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estudio de 人 (persona), 男 (hombre), 女 (mujer), 子 (niño), 上 (arriba) con sus lecturas básicas"
+        },
+        {
+          "dia": 4,
+          "titulo": "Repaso y práctica integrada",
+          "objetivos": [
+            "Repasar los 15 kanji aprendidos",
+            "Practicar escritura de memoria",
+            "Crear oraciones simples"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 40,
+          "resumen": "Sesión de repaso con ejercicios de reconocimiento, escritura y aplicación en contexto"
+        },
+        {
+          "dia": 5,
+          "titulo": "Mini prueba y nuevos kanji",
+          "objetivos": [
+            "Evaluar progreso con mini prueba",
+            "Aprender 5 kanji de tiempo",
+            "Corregir errores comunes"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 50,
+          "resumen": "Mini prueba de 15 minutos sobre kanji aprendidos, seguida de estudio de 日 (sol/día), 月 (luna/mes), 年 (año), 時 (tiempo), 分 (minuto)"
+        },
+        {
+          "dia": 6,
+          "titulo": "Kanji de familia y relaciones",
+          "objetivos": [
+            "Aprender 5 kanji familiares",
+            "Practicar combinaciones",
+            "Estudiar radicales básicos"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estudio de 父 (padre), 母 (madre), 友 (amigo), 家 (casa/familia), 国 (país) con énfasis en radicales"
+        },
+        {
+          "dia": 7,
+          "titulo": "Actividad ligera: kanji en contexto cultural",
+          "objetivos": [
+            "Ver kanji en uso real",
+            "Aprender sobre caligrafía japonesa",
+            "Repaso visual sin presión"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 30,
+          "resumen": "Sesión ligera observando kanji en arte, señales y cultura pop japonesa, con ejercicios de reconocimiento visual"
+        },
+        {
+          "dia": 8,
+          "titulo": "Evaluación parcial y repaso",
+          "objetivos": [
+            "Evaluar primeros 25 kanji",
+            "Identificar áreas de mejora",
+            "Planificar segunda semana"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 55,
+          "resumen": "Evaluación formal de los primeros 25 kanji aprendidos, con análisis de resultados y ajuste de estrategias"
+        },
+        {
+          "dia": 9,
+          "titulo": "Kanji de verbos básicos",
+          "objetivos": [
+            "Aprender 5 kanji de acciones comunes",
+            "Practicar con verbos compuestos",
+            "Estudiar variaciones"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estudio de 見 (ver), 聞 (escuchar), 話 (hablar), 食 (comer), 行 (ir) en contexto verbal"
+        },
+        {
+          "dia": 10,
+          "titulo": "Práctica intensiva de escritura",
+          "objetivos": [
+            "Mejorar técnica de escritura",
+            "Practicar 15 kanji recientes",
+            "Trabajar en velocidad y precisión"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Sesión enfocada en escritura correcta, con ejercicios repetitivos y corrección de trazos"
+        },
+        {
+          "dia": 11,
+          "titulo": "Kanji de adjetivos y conceptos",
+          "objetivos": [
+            "Aprender 5 kanji descriptivos",
+            "Practicar en frases",
+            "Estudiar opuestos"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estudio de 大 (grande), 小 (pequeño), 新 (nuevo), 古 (viejo), 好 (gustar) con ejemplos de uso"
+        },
+        {
+          "dia": 12,
+          "titulo": "Repaso general y juegos",
+          "objetivos": [
+            "Repasar 35 kanji aprendidos",
+            "Practicar con juegos mnemotécnicos",
+            "Fortalecer memoria visual"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 40,
+          "resumen": "Sesión lúdica con flashcards, juegos de memoria y asociaciones creativas para reforzar aprendizaje"
+        },
+        {
+          "dia": 13,
+          "titulo": "Kanji finales y preparación para prueba",
+          "objetivos": [
+            "Aprender últimos 5 kanji",
+            "Revisar puntos débiles",
+            "Preparar estrategia para evaluación final"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estudio de 学 (estudiar), 校 (escuela), 電 (electricidad), 車 (coche), 金 (dinero/oro) y repaso selectivo"
+        },
+        {
+          "dia": 14,
+          "titulo": "Evaluación final y plan de continuidad",
+          "objetivos": [
+            "Evaluar dominio de 60 kanji",
+            "Recibir retroalimentación completa",
+            "Establecer plan de estudio futuro"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 60,
+          "resumen": "Evaluación comprensiva de todos los kanji aprendidos, análisis de resultados y creación de plan personalizado para continuar estudios"
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 7,
+          "descripcion": "Primera evaluación parcial - Revisión de primeros 25 kanji"
+        },
+        {
+          "dia": 14,
+          "descripcion": "Evaluación final completa - Dominio de 60 kanji básicos"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [],
+      "respuestas": {},
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [
+      {
+        "usuario": "y como se cuando ocupar kanji o otra",
+        "tutor": "¡Excelente pregunta! 😊 Esta es una de las dudas más comunes al empezar con japonés. Te lo explico de forma simple:\n\n**En japonés hay 3 sistemas que se mezclan:**\n\n1. **Hiragana (ひらgana)** - Para palabras japonesas nativas y gramática\n2. **Katakana (カタカナ)** - Para palabras extranjeras y énfasis\n3. **Kanji (漢字)** - Para la raíz de las palabras (como sustantivos, verbos, adjetivos)\n\n**¿Cuándo usar kanji?** 📝\n\n- **Sustantivos**: agua = 水 (mizu) en lugar de みず\n- **Verbos**: comer = 食べる (taberu) en lugar de たべる\n- **Adjetivos**: grande = 大きい (ookii) en lugar de おおきい\n\n**¿Por qué mezclarlos?**\n- Ayuda a leer más rápido (los kanji separan las palabras visualmente)\n- Diferencia palabras que suenan igual pero significan cosas distintas\n\n**Ejemplo práctico:**\n- きょうはははとはなしをしました (solo hiragana, difícil de leer)\n- 今日は母と話をしました (con kanji, más claro) = \"Hoy hablé con mi madre\"\n\n**Consejo para empezar:** 🚀\n1. Primero domina hiragana y katakana\n2. Luego aprende kanji básicos poco a poco\n3. No te estreses - ¡los japoneses también aprenden durante años!\n\n¿Quieres que practiquemos con algunos ejemplos específicos? ¿O prefieres empezar con los kanji más útiles para el día a día? 😊",
+        "timestamp": 1773327800.359767
+      }
+    ],
+    "creado": 1773326456.062264,
+    "ultimo_acceso": 1773327781.2761033
+  },
+  "98776f6e": {
+    "id": "98776f6e",
+    "materia": "informatica",
+    "tema": "aws",
+    "semanas": 2,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de AWS para principiantes",
+      "descripcion": "Plan introductorio de 14 días para aprender los fundamentos de Amazon Web Services desde cero, combinando teoría, práctica y evaluaciones progresivas.",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción a la nube y AWS",
+          "objetivos": [
+            "Comprender qué es la computación en la nube",
+            "Conocer los servicios básicos de AWS",
+            "Crear una cuenta AWS gratuita"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 60,
+          "resumen": "Conceptos fundamentales de cloud computing, modelo de responsabilidad compartida, introducción a la consola de AWS y creación de cuenta gratuita."
+        },
+        {
+          "dia": 2,
+          "titulo": "EC2: Servidores virtuales en la nube",
+          "objetivos": [
+            "Entender qué es EC2",
+            "Aprender sobre tipos de instancias",
+            "Lanzar primera instancia EC2"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 90,
+          "resumen": "Práctica guiada para lanzar una instancia EC2, configurar grupos de seguridad y conectarse via SSH."
+        },
+        {
+          "dia": 3,
+          "titulo": "Almacenamiento en AWS: S3 y EBS",
+          "objetivos": [
+            "Diferenciar S3 y EBS",
+            "Crear bucket S3",
+            "Adjuntar volumen EBS a instancia EC2"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 75,
+          "resumen": "Configuración de almacenamiento de objetos con S3 y almacenamiento en bloque con EBS."
+        },
+        {
+          "dia": 4,
+          "titulo": "Repaso y consolidación días 1-3",
+          "objetivos": [
+            "Revisar conceptos clave",
+            "Resolver dudas prácticas",
+            "Preparar mini evaluación"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 60,
+          "resumen": "Sesión de preguntas y respuestas, revisión de ejercicios prácticos y preparación para evaluación."
+        },
+        {
+          "dia": 5,
+          "titulo": "Mini evaluación y bases de datos",
+          "objetivos": [
+            "Evaluar conocimientos adquiridos",
+            "Introducir RDS",
+            "Crear instancia de base de datos"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 90,
+          "resumen": "Prueba teórica de 30 minutos seguida de introducción a bases de datos relacionales con RDS."
+        },
+        {
+          "dia": 6,
+          "titulo": "VPC: Redes privadas virtuales",
+          "objetivos": [
+            "Comprender conceptos de VPC",
+            "Crear VPC personalizada",
+            "Configurar subredes públicas y privadas"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 75,
+          "resumen": "Fundamentos de redes en AWS: VPC, subredes, tablas de rutas y gateways de internet."
+        },
+        {
+          "dia": 7,
+          "titulo": "Seguridad en AWS: IAM y políticas",
+          "objetivos": [
+            "Entender el modelo IAM",
+            "Crear usuarios y grupos",
+            "Asignar políticas de permisos"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 90,
+          "resumen": "Gestión de identidades y accesos: usuarios, grupos, roles y políticas de seguridad."
+        },
+        {
+          "dia": 8,
+          "titulo": "Actividad ligera: Casos de uso reales",
+          "objetivos": [
+            "Explorar arquitecturas comunes",
+            "Analizar casos de estudio",
+            "Planificar proyecto final"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Revisión de arquitecturas AWS comunes para aplicaciones web, análisis de mejores prácticas."
+        },
+        {
+          "dia": 9,
+          "titulo": "Balanceo de carga y autoescalado",
+          "objetivos": [
+            "Configurar Application Load Balancer",
+            "Crear grupo de autoescalado",
+            "Monitorear rendimiento"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 90,
+          "resumen": "Implementación de alta disponibilidad con ELB y Auto Scaling Groups."
+        },
+        {
+          "dia": 10,
+          "titulo": "Repaso integral mitad del curso",
+          "objetivos": [
+            "Consolidar todos los temas",
+            "Practicar con laboratorio guiado",
+            "Preparar evaluación parcial"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 75,
+          "resumen": "Laboratorio práctico que integra EC2, S3, RDS y VPC en un escenario realista."
+        },
+        {
+          "dia": 11,
+          "titulo": "Evaluación parcial práctica",
+          "objetivos": [
+            "Demostrar habilidades adquiridas",
+            "Implementar arquitectura básica",
+            "Documentar configuración"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 120,
+          "resumen": "Evaluación práctica donde se debe desplegar una aplicación web simple usando múltiples servicios AWS."
+        },
+        {
+          "dia": 12,
+          "titulo": "Serverless: Lambda y API Gateway",
+          "objetivos": [
+            "Crear función Lambda",
+            "Configurar API Gateway",
+            "Integrar servicios serverless"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 90,
+          "resumen": "Introducción al cómputo sin servidor con AWS Lambda y creación de API RESTful."
+        },
+        {
+          "dia": 13,
+          "titulo": "Monitoreo con CloudWatch y costos",
+          "objetivos": [
+            "Configurar alarmas CloudWatch",
+            "Monitorear métricas",
+            "Optimizar costos AWS"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 60,
+          "resumen": "Herramientas de monitoreo, creación de dashboards y estrategias para control de costos en AWS."
+        },
+        {
+          "dia": 14,
+          "titulo": "Proyecto final y certificación",
+          "objetivos": [
+            "Completar proyecto integrador",
+            "Revisar camino a certificación",
+            "Planificar próximos pasos"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 120,
+          "resumen": "Desarrollo de proyecto final que integra todos los conceptos aprendidos y guía para certificación AWS Cloud Practitioner."
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 5,
+          "descripcion": "Primera evaluación teórica y práctica"
+        },
+        {
+          "dia": 11,
+          "descripcion": "Evaluación parcial práctica integradora"
+        },
+        {
+          "dia": 14,
+          "descripcion": "Proyecto final y preparación para certificación AWS Cloud Practitioner"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [],
+      "respuestas": {},
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773326785.9844553,
+    "ultimo_acceso": 1773327211.6450818
+  }
+}

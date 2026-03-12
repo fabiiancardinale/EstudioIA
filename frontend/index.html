@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 EstudioIA - Tu Tutor Inteligente</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ═══ PANTALLA DE INICIO ═══ -->
+    <div id="screen-home" class="screen active">
+        <header class="hero">
+            <div class="hero-bg"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="logo">📚</div>
+                    <h1>EstudioIA</h1>
+                    <p class="subtitle">Tu tutor inteligente con IA</p>
+                    <p class="desc">Crea un plan de estudio personalizado, aprende con explicaciones claras, practica con ejercicios y mejora con corrección automática.</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sesiones existentes -->
+        <section class="container" id="sesiones-existentes" style="display:none;">
+            <h2>📂 Continuar estudiando</h2>
+            <div id="lista-sesiones" class="sessions-grid"></div>
+            <div class="divider"><span>o crea un nuevo plan</span></div>
+        </section>
+
+        <!-- Formulario nuevo plan -->
+        <section class="container">
+            <div class="card form-card">
+                <h2>🚀 Crear Plan de Estudio</h2>
+                <form id="form-plan">
+                    <div class="form-group">
+                        <label for="materia">📖 Materia</label>
+                        <input type="text" id="materia" placeholder="Ej: Matemáticas, Física, Historia..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tema">🎯 Tema específico</label>
+                        <input type="text" id="tema" placeholder="Ej: Derivadas, Termodinámica, Guerra Fría..." required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="semanas">⏱️ Tiempo (semanas)</label>
+                            <select id="semanas">
+                                <option value="1">1 semana</option>
+                                <option value="2" selected>2 semanas</option>
+                                <option value="3">3 semanas</option>
+                                <option value="4">4 semanas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nivel">📊 Tu nivel</label>
+                            <select id="nivel">
+                                <option value="principiante">Principiante</option>
+                                <option value="intermedio" selected>Intermedio</option>
+                                <option value="avanzado">Avanzado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-generar">
+                        <span class="btn-text">✨ Generar Plan con IA</span>
+                        <span class="btn-loading" style="display:none;">
+                            <span class="spinner"></span> Generando plan...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- ═══ PANTALLA DEL PLAN ═══ -->
+    <div id="screen-plan" class="screen">
+        <nav class="topbar">
+            <button class="btn btn-ghost" onclick="goHome()">← Inicio</button>
+            <h3 id="plan-titulo-nav">Plan de Estudio</h3>
+            <div class="nav-actions">
+                <button class="btn btn-ghost" onclick="showProgress()">📊 Progreso</button>
+                <button class="btn btn-ghost" onclick="showChat()">💬 Tutor</button>
+            </div>
+        </nav>
+
+        <div class="container plan-layout">
+            <!-- Sidebar: Lista de días -->
+            <aside class="sidebar" id="sidebar-dias">
+                <div class="sidebar-header">
+                    <h3>📅 Días del Plan</h3>
+                    <div class="progress-mini">
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill-mini" id="progress-bar-mini"></div>
+                        </div>
+                        <span id="progress-text-mini">0%</span>
+                    </div>
+                </div>
+                <div id="lista-dias" class="dias-list"></div>
+            </aside>
+
+            <!-- Contenido principal -->
+            <main class="main-content" id="main-content">
+                <div class="welcome-plan" id="welcome-plan">
+                    <h2>🎉 ¡Plan creado!</h2>
+                    <p id="plan-descripcion"></p>
+                    <p>Selecciona un día del panel izquierdo para comenzar a estudiar.</p>
+                    <div id="plan-hitos" class="hitos-list"></div>
+                </div>
+
+                <!-- Contenido del día -->
+                <div id="dia-contenido" style="display:none;">
+                    <div class="dia-header">
+                        <h2 id="dia-titulo"></h2>
+                        <div class="dia-actions">
+                            <button class="btn btn-outline" onclick="generarQuiz()">📝 Mini Prueba</button>
+                        </div>
+                    </div>
+
+                    <!-- Explicación -->
+                    <div class="card" id="seccion-explicacion">
+                        <h3>📖 Explicación</h3>
+                        <div id="dia-explicacion" class="explicacion-content"></div>
+                    </div>
+
+                    <!-- Conceptos clave -->
+                    <div class="card" id="seccion-conceptos">
+                        <h3>🔑 Conceptos Clave</h3>
+                        <div id="dia-conceptos" class="conceptos-grid"></div>
+                    </div>
+
+                    <!-- Ejemplos -->
+                    <div class="card" id="seccion-ejemplos">
+                        <h3>💡 Ejemplos</h3>
+                        <div id="dia-ejemplos"></div>
+                    </div>
+
+                    <!-- Ejercicios -->
+                    <div class="card" id="seccion-ejercicios">
+                        <h3>✏️ Ejercicios</h3>
+                        <div id="dia-ejercicios"></div>
+                    </div>
+
+                    <!-- Chatbot de la lección -->
+                    <div class="card chatbot-leccion" id="seccion-chatbot">
+                        <div class="chatbot-header" onclick="toggleChatbot()">
+                            <h3>🤖 ¿Tienes dudas? Pregúntale al tutor</h3>
+                            <span class="chatbot-toggle-icon" id="chatbot-toggle-icon">▼</span>
+                        </div>
+                        <div class="chatbot-body" id="chatbot-body" style="display:none;">
+                            <div class="chatbot-messages" id="chatbot-messages">
+                                <div class="chat-msg tutor">
+                                    <div class="msg-avatar">🤖</div>
+                                    <div class="msg-bubble">¡Hola! Si tienes alguna duda sobre esta lección, pregúntame lo que quieras. Estoy aquí para ayudarte 😊</div>
+                                </div>
+                            </div>
+                            <div class="chatbot-input-area">
+                                <input type="text" id="chatbot-input" placeholder="Escribe tu pregunta sobre esta lección..." onkeypress="if(event.key==='Enter')enviarChatLeccion()">
+                                <button class="btn btn-primary" onclick="enviarChatLeccion()">
+                                    <span id="chatbot-btn-text">Enviar</span>
+                                    <span id="chatbot-btn-loading" style="display:none;"><span class="spinner"></span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dato curioso -->
+                    <div class="card dato-curioso" id="seccion-dato">
+                        <h3>🤓 Dato Curioso</h3>
+                        <p id="dia-dato"></p>
+                    </div>
+                </div>
+
+                <!-- Quiz -->
+                <div id="quiz-contenido" style="display:none;">
+                    <div class="dia-header">
+                        <h2 id="quiz-titulo"></h2>
+                        <div class="quiz-timer" id="quiz-timer" style="display:none;">
+                            <span class="timer-icon">⏱️</span>
+                            <span id="timer-display">15:00</span>
+                        </div>
+                    </div>
+                    <div id="quiz-preguntas"></div>
+                    <button class="btn btn-primary btn-lg" id="btn-enviar-quiz" onclick="enviarQuiz()" style="display:none;">
+                        📨 Enviar Respuestas
+                    </button>
+                    <div id="quiz-resultado" style="display:none;"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ═══ MODAL: CHAT TUTOR ═══ -->
+    <div id="modal-chat" class="modal">
+        <div class="modal-content chat-modal">
+            <div class="modal-header">
+                <h3>💬 Chat con tu Tutor IA</h3>
+                <button class="btn btn-ghost" onclick="closeChat()">✕</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="chat-msg tutor">
+                    <div class="msg-avatar">🤖</div>
+                    <div class="msg-bubble">¡Hola! Soy tu tutor IA. Pregúntame lo que quieras sobre tu tema de estudio. Puedes decirme cosas como:<br><br>
+                    • "Explícame esto como si tuviera 12 años"<br>
+                    • "Dame un ejercicio parecido"<br>
+                    • "No entiendo este concepto"</div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter')enviarChat()">
+                <button class="btn btn-primary" onclick="enviarChat()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ MODAL: PROGRESO ═══ -->
+    <div id="modal-progreso" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📊 Tu Progreso</h3>
+                <button class="btn btn-ghost" onclick="closeProgress()">✕</button>
+            </div>
+            <div id="progreso-contenido" class="progreso-body"></div>
+        </div>
+    </div>
+
+    <!-- ═══ LOADING OVERLAY ═══ -->
+    <div id="loading-overlay" class="loading-overlay" style="display:none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Cargando...</p>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

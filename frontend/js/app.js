@@ -8,6 +8,7 @@ let state = {
     sessionId: null,
     plan: null,
     diaActual: null,
+    contenidoDia: null,
     quizActual: null,
     timerInterval: null,
     timerSeconds: 0,
@@ -260,6 +261,7 @@ async function seleccionarDia(dia) {
 
     try {
         const data = await api(`/api/dia/${state.sessionId}/${dia}`);
+        state.contenidoDia = data.contenido;
         mostrarContenidoDia(data.contenido, dia);
     } catch (err) {
         toast(`Error: ${err.message}`, 'error');
@@ -304,45 +306,44 @@ function mostrarContenidoDia(contenido, dia) {
     // Ejercicios
     const ejercicios = c.ejercicios || [];
     $('dia-ejercicios').innerHTML = ejercicios.map((ej, i) => {
-        const esMultiple = ej.tipo === 'opcion_multiple' && ej.opciones && ej.opciones.length > 0;
+        const tipo = ej.tipo || 'abierta';
+        const tipoBadge = {
+            'opcion_multiple': '📋 Opción múltiple',
+            'abierta': '✍️ Respuesta abierta',
+            'verdadero_falso': '✅ Verdadero o Falso',
+            'completar': '📝 Completar',
+            'ordenar': '🔢 Ordenar',
+            'dibujo': '🎨 Dibujo',
+        };
 
-        let inputHTML;
-        if (esMultiple) {
-            inputHTML = `
-                <div class="ejercicio-opciones" id="opciones-${i}">
-                    ${ej.opciones.map((op, j) => `
-                        <div class="opcion-item" onclick="seleccionarOpcion(${i}, ${j}, this)">
-                            <div class="opcion-radio"></div>
-                            <span>${op}</span>
-                        </div>
-                    `).join('')}
-                </div>
-                <input type="hidden" id="resp-${i}" value="">
-            `;
-        } else {
-            inputHTML = `
-                <div class="ejercicio-input-area">
-                    <input type="text" id="resp-${i}" placeholder="Escribe tu respuesta..."
-                           onkeypress="if(event.key==='Enter')verificarRespuesta(${i})">
-                    <button class="btn btn-primary" onclick="verificarRespuesta(${i})">Verificar</button>
-                </div>
-            `;
-        }
+        let inputHTML = renderEjercicioInput(ej, i);
 
         return `
             <div class="ejercicio-card" id="ejercicio-${i}">
                 <div class="ejercicio-num">
                     Ejercicio ${i + 1}
+                    <span class="ejercicio-tipo-badge badge-${tipo}">${tipoBadge[tipo] || tipo}</span>
                     <button class="btn-pista" onclick="mostrarPista(${i})">💡 Pista</button>
                 </div>
                 <div class="ejercicio-enunciado">${ej.enunciado || ''}</div>
                 <div class="ejercicio-pista" id="pista-${i}">${ej.pista || 'Sin pista disponible'}</div>
                 ${inputHTML}
-                ${esMultiple ? `<button class="btn btn-primary" style="margin-top:12px;" onclick="verificarRespuesta(${i})">Verificar</button>` : ''}
+                <button class="btn btn-primary" style="margin-top:12px;" onclick="verificarRespuesta(${i})">Verificar</button>
                 <div class="ejercicio-feedback" id="feedback-${i}" style="display:none;"></div>
             </div>
         `;
     }).join('');
+
+    // Inicializar canvases de dibujo
+    ejercicios.forEach((ej, i) => {
+        if (ej.tipo === 'dibujo') {
+            setTimeout(() => initCanvas(i), 100);
+        }
+        if (ej.tipo === 'ordenar') {
+            setTimeout(() => initSortable(i), 100);
+        }
+    });
+
     $('seccion-ejercicios').style.display = ejercicios.length > 0 ? 'block' : 'none';
 
     // Dato curioso
@@ -353,16 +354,131 @@ function mostrarContenidoDia(contenido, dia) {
     $('main-content').scrollTop = 0;
 }
 
-// ═══ EJERCICIOS ═════════════════════════════════════
+// ═══ RENDER EJERCICIO POR TIPO ══════════════════════
+function renderEjercicioInput(ej, idx) {
+    const tipo = ej.tipo || 'abierta';
+
+    switch (tipo) {
+        case 'opcion_multiple':
+            return `
+                <div class="ejercicio-opciones" id="opciones-${idx}">
+                    ${(ej.opciones || []).map((op, j) => `
+                        <div class="opcion-item" onclick="seleccionarOpcion(${idx}, ${j}, this)">
+                            <div class="opcion-radio"></div>
+                            <span>${op}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <input type="hidden" id="resp-${idx}" value="">
+            `;
+
+        case 'verdadero_falso':
+            return `
+                <div class="vf-opciones" id="vf-${idx}">
+                    <button class="vf-btn vf-verdadero" onclick="seleccionarVF(${idx}, 'verdadero', this)">
+                        ✅ Verdadero
+                    </button>
+                    <button class="vf-btn vf-falso" onclick="seleccionarVF(${idx}, 'falso', this)">
+                        ❌ Falso
+                    </button>
+                </div>
+                <input type="hidden" id="resp-${idx}" value="">
+            `;
+
+        case 'completar':
+            const textoConBlancos = ej.texto_con_blancos || ej.enunciado || '';
+            const partes = textoConBlancos.split('___');
+            let completarHTML = '<div class="completar-texto">';
+            partes.forEach((parte, j) => {
+                completarHTML += parte;
+                if (j < partes.length - 1) {
+                    completarHTML += `<input type="text" class="blank-input" id="blank-${idx}-${j}" placeholder="..." data-ejercicio="${idx}">`;
+                }
+            });
+            completarHTML += '</div>';
+            completarHTML += `<input type="hidden" id="resp-${idx}" value="">`;
+            return completarHTML;
+
+        case 'ordenar':
+            const items = ej.opciones || [];
+            return `
+                <div class="ordenar-container" id="ordenar-${idx}">
+                    <div class="ordenar-items" id="ordenar-items-${idx}">
+                        ${items.map((item, j) => `
+                            <div class="ordenar-item" draggable="true" data-value="${item}" data-idx="${j}">
+                                <span class="drag-handle">⠿</span>
+                                <span class="order-num">${j + 1}</span>
+                                <span class="item-text">${item}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <input type="hidden" id="resp-${idx}" value="">
+            `;
+
+        case 'dibujo':
+            return `
+                <div class="canvas-container" id="canvas-container-${idx}">
+                    <div class="canvas-toolbar" id="canvas-toolbar-${idx}">
+                        <div class="toolbar-group">
+                            <label>Color:</label>
+                            <button class="color-btn active" style="background:#000000" onclick="setCanvasColor(${idx}, '#000000', this)"></button>
+                            <button class="color-btn" style="background:#e74c3c" onclick="setCanvasColor(${idx}, '#e74c3c', this)"></button>
+                            <button class="color-btn" style="background:#3498db" onclick="setCanvasColor(${idx}, '#3498db', this)"></button>
+                            <button class="color-btn" style="background:#2ecc71" onclick="setCanvasColor(${idx}, '#2ecc71', this)"></button>
+                            <button class="color-btn" style="background:#f39c12" onclick="setCanvasColor(${idx}, '#f39c12', this)"></button>
+                            <button class="color-btn" style="background:#9b59b6" onclick="setCanvasColor(${idx}, '#9b59b6', this)"></button>
+                        </div>
+                        <div class="toolbar-separator"></div>
+                        <div class="toolbar-group">
+                            <label>Grosor:</label>
+                            <input type="range" min="1" max="20" value="3" onchange="setCanvasBrush(${idx}, this.value)">
+                        </div>
+                        <div class="toolbar-separator"></div>
+                        <div class="toolbar-group">
+                            <button class="tool-btn" onclick="setCanvasTool(${idx}, 'pen', this)">✏️ Lápiz</button>
+                            <button class="tool-btn" onclick="setCanvasTool(${idx}, 'eraser', this)">🧹 Borrador</button>
+                            <button class="tool-btn" onclick="clearCanvas(${idx})">🗑️ Limpiar</button>
+                        </div>
+                    </div>
+                    <canvas class="drawing-canvas" id="canvas-${idx}" width="700" height="300"></canvas>
+                    <div class="canvas-hint">🖱️ Dibuja aquí tu respuesta · Usa las herramientas de arriba para cambiar color y grosor</div>
+                </div>
+                <input type="hidden" id="resp-${idx}" value="dibujo_completado">
+            `;
+
+        case 'abierta':
+        default:
+            return `
+                <div class="ejercicio-input-area">
+                    <input type="text" id="resp-${idx}" placeholder="Escribe tu respuesta..."
+                           onkeypress="if(event.key==='Enter')verificarRespuesta(${idx})">
+                </div>
+            `;
+    }
+}
+
+// ═══ EJERCICIOS - INTERACCIONES ═════════════════════
 function seleccionarOpcion(ejercicioIdx, opcionIdx, element) {
-    // Deseleccionar todas las opciones de este ejercicio
     const container = $(`opciones-${ejercicioIdx}`);
     container.querySelectorAll('.opcion-item').forEach(op => op.classList.remove('selected'));
     element.classList.add('selected');
-
-    // Guardar respuesta
     const opciones = container.querySelectorAll('.opcion-item span');
     $(`resp-${ejercicioIdx}`).value = opciones[opcionIdx].textContent.trim();
+}
+
+function seleccionarVF(ejercicioIdx, valor, element) {
+    const container = $(`vf-${ejercicioIdx}`);
+    container.querySelectorAll('.vf-btn').forEach(btn => btn.classList.remove('selected'));
+    element.classList.add('selected');
+    $(`resp-${ejercicioIdx}`).value = valor;
+}
+
+function recogerCompletarRespuesta(idx) {
+    const blanks = document.querySelectorAll(`[id^="blank-${idx}-"]`);
+    const valores = [];
+    blanks.forEach(b => valores.push(b.value.trim()));
+    return valores.join(', ');
 }
 
 function mostrarPista(idx) {
@@ -370,10 +486,206 @@ function mostrarPista(idx) {
     pista.classList.toggle('visible');
 }
 
+// ═══ CANVAS DE DIBUJO ═══════════════════════════════
+const canvasStates = {};
+
+function initCanvas(idx) {
+    const canvas = $(`canvas-${idx}`);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar tamaño real del canvas
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = 300;
+
+    // Fondo blanco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    canvasStates[idx] = {
+        drawing: false,
+        color: '#000000',
+        brushSize: 3,
+        tool: 'pen',
+        ctx: ctx,
+        canvas: canvas,
+        lastX: 0,
+        lastY: 0,
+        hasDrawn: false,
+    };
+
+    // Eventos de dibujo
+    canvas.addEventListener('pointerdown', (e) => startDrawing(idx, e));
+    canvas.addEventListener('pointermove', (e) => draw(idx, e));
+    canvas.addEventListener('pointerup', () => stopDrawing(idx));
+    canvas.addEventListener('pointerleave', () => stopDrawing(idx));
+}
+
+function getCanvasPos(idx, e) {
+    const rect = canvasStates[idx].canvas.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+    };
+}
+
+function startDrawing(idx, e) {
+    const state = canvasStates[idx];
+    state.drawing = true;
+    state.hasDrawn = true;
+    const pos = getCanvasPos(idx, e);
+    state.lastX = pos.x;
+    state.lastY = pos.y;
+
+    // Dibujar punto
+    state.ctx.beginPath();
+    state.ctx.arc(pos.x, pos.y, state.brushSize / 2, 0, Math.PI * 2);
+    state.ctx.fillStyle = state.tool === 'eraser' ? '#ffffff' : state.color;
+    state.ctx.fill();
+}
+
+function draw(idx, e) {
+    const st = canvasStates[idx];
+    if (!st.drawing) return;
+
+    const pos = getCanvasPos(idx, e);
+
+    st.ctx.beginPath();
+    st.ctx.moveTo(st.lastX, st.lastY);
+    st.ctx.lineTo(pos.x, pos.y);
+    st.ctx.strokeStyle = st.tool === 'eraser' ? '#ffffff' : st.color;
+    st.ctx.lineWidth = st.brushSize;
+    st.ctx.lineCap = 'round';
+    st.ctx.lineJoin = 'round';
+    st.ctx.stroke();
+
+    st.lastX = pos.x;
+    st.lastY = pos.y;
+}
+
+function stopDrawing(idx) {
+    if (canvasStates[idx]) {
+        canvasStates[idx].drawing = false;
+    }
+}
+
+function setCanvasColor(idx, color, btn) {
+    canvasStates[idx].color = color;
+    canvasStates[idx].tool = 'pen';
+    // Actualizar UI
+    const toolbar = $(`canvas-toolbar-${idx}`);
+    toolbar.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    toolbar.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+}
+
+function setCanvasBrush(idx, size) {
+    canvasStates[idx].brushSize = parseInt(size);
+}
+
+function setCanvasTool(idx, tool, btn) {
+    canvasStates[idx].tool = tool;
+    const toolbar = $(`canvas-toolbar-${idx}`);
+    toolbar.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function clearCanvas(idx) {
+    const st = canvasStates[idx];
+    st.ctx.fillStyle = '#ffffff';
+    st.ctx.fillRect(0, 0, st.canvas.width, st.canvas.height);
+    st.hasDrawn = false;
+}
+
+// ═══ ORDENAR (DRAG & DROP) ══════════════════════════
+function initSortable(idx) {
+    const container = $(`ordenar-items-${idx}`);
+    if (!container) return;
+
+    let draggedItem = null;
+
+    container.querySelectorAll('.ordenar-item').forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            draggedItem = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            draggedItem = null;
+            updateOrderNumbers(idx);
+            updateOrderResponse(idx);
+        });
+
+        item.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const afterElement = getDragAfterElement(container, e.clientY);
+            if (afterElement == null) {
+                container.appendChild(draggedItem);
+            } else {
+                container.insertBefore(draggedItem, afterElement);
+            }
+        });
+    });
+
+    updateOrderResponse(idx);
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.ordenar-item:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateOrderNumbers(idx) {
+    const container = $(`ordenar-items-${idx}`);
+    container.querySelectorAll('.ordenar-item').forEach((item, i) => {
+        item.querySelector('.order-num').textContent = i + 1;
+    });
+}
+
+function updateOrderResponse(idx) {
+    const container = $(`ordenar-items-${idx}`);
+    const items = container.querySelectorAll('.ordenar-item');
+    const order = [...items].map(item => item.dataset.value);
+    $(`resp-${idx}`).value = order.join(', ');
+}
+
+// ═══ VERIFICAR RESPUESTA ════════════════════════════
 async function verificarRespuesta(idx) {
-    const respuesta = $(`resp-${idx}`).value.trim();
+    const ejercicio = (state.contenidoDia && state.contenidoDia.ejercicios) ? state.contenidoDia.ejercicios[idx] : null;
+    const tipo = ejercicio ? (ejercicio.tipo || 'abierta') : 'abierta';
+
+    // Recoger respuesta según tipo
+    let respuesta = '';
+    if (tipo === 'completar') {
+        respuesta = recogerCompletarRespuesta(idx);
+        $(`resp-${idx}`).value = respuesta;
+    } else if (tipo === 'dibujo') {
+        // Para dibujo, verificamos que haya dibujado algo
+        const st = canvasStates[idx];
+        if (!st || !st.hasDrawn) {
+            toast('Dibuja tu respuesta primero', 'error');
+            return;
+        }
+        respuesta = 'El estudiante ha realizado un dibujo en el canvas';
+    } else {
+        respuesta = $(`resp-${idx}`).value.trim();
+    }
+
     if (!respuesta) {
-        toast('Escribe una respuesta primero', 'error');
+        toast('Completa tu respuesta primero', 'error');
         return;
     }
 
@@ -384,6 +696,35 @@ async function verificarRespuesta(idx) {
     feedbackEl.className = 'ejercicio-feedback';
 
     try {
+        // Para ejercicios de dibujo, evaluamos localmente
+        if (tipo === 'dibujo') {
+            feedbackEl.className = 'ejercicio-feedback feedback-correcto';
+            feedbackEl.innerHTML = `
+                <strong>✅ ¡Buen trabajo!</strong>
+                <div class="feedback-detail">Has completado el ejercicio de dibujo. La respuesta esperada era: <strong>${ejercicio.respuesta_correcta || ''}</strong></div>
+                <div class="feedback-detail">Compara tu dibujo con la descripción y verifica que coincida. Si necesitas mejorar, puedes limpiar el canvas e intentar de nuevo.</div>
+                <div class="feedback-detail">💡 Recuerda: la práctica visual ayuda mucho a entender conceptos abstractos.</div>
+            `;
+            ejercicioEl.classList.add('correcto');
+
+            // Registrar en el backend
+            await api('/api/verificar', {
+                method: 'POST',
+                body: {
+                    session_id: state.sessionId,
+                    dia: state.diaActual,
+                    ejercicio_index: idx,
+                    respuesta: 'dibujo completado',
+                    ejercicio_enunciado: ejercicio ? ejercicio.enunciado : '',
+                    ejercicio_opciones: [],
+                    ejercicio_respuesta_correcta: ejercicio ? (ejercicio.respuesta_correcta || '') : '',
+                },
+            }).catch(() => {});
+
+            actualizarBarraProgreso();
+            return;
+        }
+
         const resultado = await api('/api/verificar', {
             method: 'POST',
             body: {
@@ -391,6 +732,9 @@ async function verificarRespuesta(idx) {
                 dia: state.diaActual,
                 ejercicio_index: idx,
                 respuesta: respuesta,
+                ejercicio_enunciado: ejercicio ? ejercicio.enunciado : '',
+                ejercicio_opciones: ejercicio ? (ejercicio.opciones || []) : [],
+                ejercicio_respuesta_correcta: ejercicio ? (ejercicio.respuesta_correcta || '') : '',
             },
         });
 
@@ -876,5 +1220,6 @@ function goHome() {
     state.sessionId = null;
     state.plan = null;
     state.diaActual = null;
+    state.contenidoDia = null;
     state.quizActual = null;
 }

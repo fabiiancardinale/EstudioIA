@@ -114,63 +114,148 @@ Asegúrate de que haya {total_dias} días en el plan."""
         debilidades = progreso.get("debilidades", [])
         debilidades_str = ", ".join(debilidades) if debilidades else "ninguna identificada aún"
 
-        system = """Eres un tutor experto que explica conceptos de forma clara y simple.
-Adaptas tu explicación al nivel del estudiante.
+        system = """Eres un tutor experto que crea lecciones completas, detalladas y pedagógicamente excelentes.
+Tus explicaciones son claras, con muchos ejemplos y analogías del mundo real.
+Adaptas todo al nivel del estudiante.
 Responde SOLO con JSON válido."""
 
-        user = f"""Genera el contenido de estudio para:
+        user = f"""Genera una lección COMPLETA y DETALLADA de estudio para:
 - Materia: {materia}
 - Tema: {tema}
 - Nivel: {nivel}
 - Día {dia}: {json.dumps(dia_info, ensure_ascii=False) if dia_info else f"Día {dia} del plan"}
 - Debilidades del estudiante: {debilidades_str}
 
+IMPORTANTE - La lección debe ser MUY COMPLETA:
+1. La explicación debe cubrir TODOS los puntos del tema del día de forma exhaustiva
+2. Usa analogías cotidianas para que sea fácil de entender
+3. Incluye fórmulas, reglas o definiciones importantes
+4. Los ejemplos deben ser paso a paso, detallados
+
+IMPORTANTE - Los ejercicios deben ser VARIADOS y DINÁMICOS. Usa estos tipos:
+- "opcion_multiple": Preguntas con 4 opciones (a, b, c, d)
+- "abierta": El estudiante escribe su respuesta (para cálculos, definiciones)
+- "verdadero_falso": Afirmaciones donde el estudiante elige V o F
+- "completar": Texto con espacios en blanco que el estudiante debe rellenar (usa ___ para los blancos)
+- "ordenar": El estudiante debe ordenar elementos en el orden correcto
+- "dibujo": El estudiante dibuja en un canvas (para representaciones gráficas, diagramas, fracciones visuales, etc.)
+
 Responde con este JSON:
 {{
-    "titulo": "Título de la lección del día",
-    "explicacion": "Explicación detallada y clara del tema del día. Usa ejemplos simples. Puede ser largo y detallado. Usa markdown para formato.",
-    "conceptos_clave": ["concepto 1", "concepto 2"],
+    "titulo": "Título descriptivo de la lección del día",
+    "explicacion": "Explicación MUY DETALLADA y COMPLETA del tema. Debe cubrir: introducción al concepto, definiciones formales, explicación intuitiva con analogías, reglas y propiedades importantes. MÍNIMO 400 palabras. Usa markdown: **negritas** para conceptos clave, listas con -, ejemplos inline. Estructura con subtítulos ## para cada sección.",
+    "conceptos_clave": ["concepto 1", "concepto 2", "concepto 3", "concepto 4"],
     "ejemplos": [
         {{
-            "titulo": "Ejemplo 1",
-            "enunciado": "Descripción del ejemplo",
-            "desarrollo": "Paso a paso de la resolución",
-            "resultado": "Resultado final"
+            "titulo": "Ejemplo 1 - Nombre descriptivo",
+            "enunciado": "Planteamiento claro del ejemplo",
+            "desarrollo": "Resolución PASO A PASO detallada:\\nPaso 1: ...\\nPaso 2: ...\\nPaso 3: ...",
+            "resultado": "Resultado final con explicación"
         }}
     ],
     "ejercicios": [
         {{
             "id": 0,
-            "enunciado": "Enunciado del ejercicio",
-            "pista": "Una pista para resolver el ejercicio",
-            "tipo": "abierta|opcion_multiple",
+            "enunciado": "Enunciado claro y completo del ejercicio",
+            "pista": "Una pista útil",
+            "tipo": "opcion_multiple",
             "opciones": ["a) opción 1", "b) opción 2", "c) opción 3", "d) opción 4"],
-            "respuesta_correcta": "La respuesta correcta"
+            "respuesta_correcta": "b) opción 2"
+        }},
+        {{
+            "id": 1,
+            "enunciado": "Verdadero o Falso: [afirmación]",
+            "pista": "Pista para pensar",
+            "tipo": "verdadero_falso",
+            "opciones": [],
+            "respuesta_correcta": "verdadero"
+        }},
+        {{
+            "id": 2,
+            "enunciado": "Calcula el resultado de...",
+            "pista": "Recuerda que...",
+            "tipo": "abierta",
+            "opciones": [],
+            "respuesta_correcta": "42"
+        }},
+        {{
+            "id": 3,
+            "enunciado": "Completa: El ___ es igual a ___ dividido entre ___",
+            "pista": "Piensa en la definición",
+            "tipo": "completar",
+            "opciones": [],
+            "respuesta_correcta": "cociente, dividendo, divisor",
+            "texto_con_blancos": "El ___ es igual a ___ dividido entre ___"
+        }},
+        {{
+            "id": 4,
+            "enunciado": "Dibuja un círculo que represente la fracción 3/4 (divide en partes iguales y colorea las que correspondan)",
+            "pista": "El denominador te dice en cuántas partes dividir, el numerador cuántas colorear",
+            "tipo": "dibujo",
+            "opciones": [],
+            "respuesta_correcta": "Un círculo dividido en 4 partes iguales con 3 partes coloreadas"
+        }},
+        {{
+            "id": 5,
+            "enunciado": "Ordena de menor a mayor las siguientes fracciones",
+            "pista": "Convierte a un denominador común",
+            "tipo": "ordenar",
+            "opciones": ["3/4", "1/2", "1/4", "2/3"],
+            "respuesta_correcta": "1/4, 1/2, 2/3, 3/4"
         }}
     ],
-    "dato_curioso": "Un dato interesante relacionado con el tema"
+    "dato_curioso": "Un dato interesante y sorprendente relacionado con el tema"
 }}
 
-Genera 3-5 ejercicios variados. Si hay debilidades, enfoca algunos ejercicios en reforzarlas.
-Las explicaciones deben ser claras como para alguien de nivel {nivel}."""
+REGLAS CRÍTICAS:
+- Genera MÍNIMO 5 ejercicios y MÁXIMO 7
+- USA AL MENOS 3 TIPOS DIFERENTES de ejercicios
+- Si el tema permite representación visual, INCLUYE al menos 1 ejercicio de tipo "dibujo"
+- Para "opcion_multiple", la respuesta_correcta debe ser el texto completo de la opción correcta (ej: "b) 3/4")
+- Para "verdadero_falso", la respuesta_correcta es "verdadero" o "falso"
+- Para "completar", incluye el campo "texto_con_blancos" con ___ donde van los blancos
+- Para "ordenar", las opciones son los items desordenados y respuesta_correcta es el orden correcto separado por comas
+- Para "dibujo", el enunciado debe explicar EXACTAMENTE qué dibujar y la respuesta_correcta describe lo esperado
+- La explicación debe ser EXTENSA, clara y completa como una clase real
+- Los ejemplos deben tener desarrollo paso a paso
+- Si hay debilidades, refuerza esas áreas
+- Las explicaciones deben ser apropiadas para nivel {nivel}"""
 
         raw = await self._chat(system, user)
         return self._parse_json(raw)
 
     # ── Verificar Respuesta ──────────────────────────
     async def verificar_respuesta(
-        self, materia: str, tema: str, dia: int, ejercicio_index: int, respuesta: str, plan: dict
+        self, materia: str, tema: str, dia: int, ejercicio_index: int, respuesta: str, plan: dict,
+        ejercicio_enunciado: str = "", ejercicio_opciones: list = None, ejercicio_respuesta_correcta: str = ""
     ) -> dict:
+        # Construir contexto del ejercicio
+        contexto_ejercicio = ""
+        if ejercicio_enunciado:
+            contexto_ejercicio += f"\n- Enunciado del ejercicio: \"{ejercicio_enunciado}\""
+        if ejercicio_opciones:
+            contexto_ejercicio += f"\n- Opciones: {', '.join(ejercicio_opciones)}"
+        if ejercicio_respuesta_correcta:
+            contexto_ejercicio += f"\n- Respuesta correcta esperada: \"{ejercicio_respuesta_correcta}\""
+
         system = """Eres un corrector educativo justo y motivador.
-Evalúa respuestas de estudiantes con explicaciones claras.
+Evalúa respuestas comparándolas con la respuesta correcta proporcionada.
+IMPORTANTE: Si se proporciona la respuesta correcta esperada, úsala como referencia principal para evaluar.
+Para ejercicios de verdadero/falso, la respuesta será "verdadero" o "falso".
+Para ejercicios de completar, la respuesta será las palabras separadas por comas.
+Para ejercicios de ordenar, la respuesta será los elementos en el orden dado por el estudiante, separados por comas.
 Responde SOLO con JSON válido."""
 
         user = f"""Evalúa esta respuesta de un estudiante:
 - Materia: {materia}
 - Tema: {tema}
 - Día: {dia}
-- Ejercicio número: {ejercicio_index + 1}
+- Ejercicio número: {ejercicio_index + 1}{contexto_ejercicio}
 - Respuesta del estudiante: "{respuesta}"
+
+Compara la respuesta del estudiante con la respuesta correcta esperada.
+Si la respuesta del estudiante es equivalente o sustancialmente correcta, márcala como correcta.
+Para opción múltiple, compara si eligió la opción correcta (puede que el formato varíe ligeramente).
 
 Responde con este JSON:
 {{

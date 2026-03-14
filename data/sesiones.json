@@ -627,5 +627,365 @@
     "chat_historial": [],
     "creado": 1773326785.9844553,
     "ultimo_acceso": 1773327211.6450818
+  },
+  "91ced6cd": {
+    "id": "91ced6cd",
+    "materia": "matematicas",
+    "tema": "fracciones de primer grado",
+    "semanas": 1,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de fracciones de primer grado",
+      "descripcion": "Introducción completa a fracciones básicas para estudiantes principiantes, cubriendo conceptos fundamentales, representación visual, comparación y operaciones simples.",
+      "total_dias": 7,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "¿Qué son las fracciones?",
+          "objetivos": [
+            "Comprender el concepto de fracción como parte de un todo",
+            "Identificar numerador y denominador",
+            "Representar fracciones con dibujos"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Introducción al concepto de fracción usando ejemplos cotidianos (pizza, chocolate). Explicación de numerador y denominador con representaciones visuales."
+        },
+        {
+          "dia": 2,
+          "titulo": "Fracciones equivalentes y representación",
+          "objetivos": [
+            "Identificar fracciones equivalentes visualmente",
+            "Representar fracciones en la recta numérica",
+            "Reconocer fracciones propias e impropias"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios prácticos con dibujos para encontrar fracciones equivalentes. Ubicación de fracciones simples en la recta numérica de 0 a 1."
+        },
+        {
+          "dia": 3,
+          "titulo": "Comparando fracciones",
+          "objetivos": [
+            "Comparar fracciones con mismo denominador",
+            "Comparar fracciones con mismo numerador",
+            "Ordenar fracciones simples"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Estrategias para comparar fracciones usando representaciones visuales y reglas básicas. Ejemplos con fracciones comunes como 1/2, 1/4, 3/4."
+        },
+        {
+          "dia": 4,
+          "titulo": "Mini prueba y práctica de comparación",
+          "objetivos": [
+            "Evaluar comprensión de conceptos básicos",
+            "Aplicar comparación de fracciones en ejercicios",
+            "Corregir errores comunes"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 40,
+          "resumen": "Mini evaluación de 15 minutos sobre conceptos vistos, seguida de ejercicios prácticos de comparación y ordenamiento de fracciones."
+        },
+        {
+          "dia": 5,
+          "titulo": "Suma y resta de fracciones con mismo denominador",
+          "objetivos": [
+            "Sumar fracciones con denominadores iguales",
+            "Restar fracciones con denominadores iguales",
+            "Resolver problemas sencillos con fracciones"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Introducción a operaciones básicas con fracciones que comparten denominador. Ejercicios progresivos desde simples a problemas contextualizados."
+        },
+        {
+          "dia": 6,
+          "titulo": "Repaso general y actividades lúdicas",
+          "objetivos": [
+            "Revisar todos los conceptos aprendidos",
+            "Aplicar conocimientos en juegos y actividades",
+            "Fortalecer comprensión mediante ejercicios variados"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 45,
+          "resumen": "Día de consolidación con actividades interactivas: juegos con fracciones, rompecabezas visuales y problemas cotidianos que involucren fracciones."
+        },
+        {
+          "dia": 7,
+          "titulo": "Evaluación final y aplicación",
+          "objetivos": [
+            "Demostrar dominio de conceptos básicos de fracciones",
+            "Resolver problemas aplicados con fracciones",
+            "Identificar áreas de mejora"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 55,
+          "resumen": "Evaluación comprensiva que incluye identificación, comparación, ordenamiento y operaciones básicas con fracciones, seguida de retroalimentación."
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 4,
+          "descripcion": "Mini evaluación de mitad de semana para verificar comprensión"
+        },
+        {
+          "dia": 7,
+          "descripcion": "Evaluación final del plan de fracciones básicas"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [
+        1
+      ],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 0,
+            "respuesta": "b) 3/4",
+            "correcto": false,
+            "timestamp": 1773420158.6535344
+          },
+          {
+            "ejercicio": 1,
+            "respuesta": "b) Numerador: 2, Denominador: 5",
+            "correcto": true,
+            "timestamp": 1773421308.3319318
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "1/4",
+            "correcto": false,
+            "timestamp": 1773421346.8021476
+          }
+        ]
+      },
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773419913.1198742,
+    "ultimo_acceso": 1773423256.8992045
+  },
+  "d2aca478": {
+    "id": "d2aca478",
+    "materia": "matematicas",
+    "tema": "fracciones",
+    "semanas": 2,
+    "nivel": "intermedio",
+    "plan": {
+      "titulo": "Plan de estudio de fracciones",
+      "descripcion": "Plan de 14 días para estudiantes de nivel intermedio que profundiza en operaciones con fracciones, comparación, conversión y resolución de problemas aplicados.",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Repaso de conceptos básicos y fracciones equivalentes",
+          "objetivos": [
+            "Recordar qué es una fracción y sus partes",
+            "Comprender y generar fracciones equivalentes"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Se revisarán los conceptos fundamentales de fracciones (numerador, denominador, representación) y se aprenderá a obtener fracciones equivalentes mediante amplificación y simplificación."
+        },
+        {
+          "dia": 2,
+          "titulo": "Práctica de fracciones equivalentes y simplificación",
+          "objetivos": [
+            "Aplicar la simplificación de fracciones",
+            "Resolver ejercicios de equivalencia"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Sesión de ejercicios para hallar fracciones equivalentes, simplificar fracciones a su mínima expresión y completar series equivalentes."
+        },
+        {
+          "dia": 3,
+          "titulo": "Comparación y orden de fracciones",
+          "objetivos": [
+            "Comparar fracciones con igual y distinto denominador",
+            "Ordenar fracciones de menor a mayor"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Se enseñarán métodos para comparar fracciones (usando común denominador, productos cruzados) y ordenar conjuntos de fracciones."
+        },
+        {
+          "dia": 4,
+          "titulo": "Práctica de comparación y ordenación",
+          "objetivos": [
+            "Aplicar métodos de comparación en ejercicios",
+            "Ordenar listas de fracciones"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios variados para comparar fracciones usando diferentes estrategias y ordenar conjuntos de fracciones en la recta numérica."
+        },
+        {
+          "dia": 5,
+          "titulo": "Mini prueba de conceptos iniciales",
+          "objetivos": [
+            "Evaluar comprensión de equivalencia y comparación",
+            "Identificar áreas de mejora"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 40,
+          "resumen": "Prueba corta que incluye preguntas sobre fracciones equivalentes, simplificación, comparación y ordenación de fracciones."
+        },
+        {
+          "dia": 6,
+          "titulo": "Suma y resta de fracciones con igual denominador",
+          "objetivos": [
+            "Sumar fracciones homogéneas",
+            "Restar fracciones homogéneas"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Se explicará la suma y resta de fracciones con el mismo denominador, enfatizando la conservación del denominador y la operación con numeradores."
+        },
+        {
+          "dia": 7,
+          "titulo": "Suma y resta de fracciones con distinto denominador",
+          "objetivos": [
+            "Hallar el mínimo común múltiplo (mcm)",
+            "Sumar y restar fracciones heterogéneas"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 50,
+          "resumen": "Se enseñará el procedimiento para sumar y restar fracciones con diferente denominador, utilizando el mcm para encontrar común denominador."
+        },
+        {
+          "dia": 8,
+          "titulo": "Práctica intensiva de suma y resta",
+          "objetivos": [
+            "Resolver ejercicios combinados de suma y resta",
+            "Aplicar simplificación en resultados"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Sesión de ejercicios progresivos que incluyen suma y resta de fracciones homogéneas y heterogéneas, con simplificación del resultado final."
+        },
+        {
+          "dia": 9,
+          "titulo": "Multiplicación de fracciones",
+          "objetivos": [
+            "Multiplicar fracciones de forma directa",
+            "Simplificar antes de multiplicar (cancelación)"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Se explicará la regla para multiplicar fracciones (numerador por numerador, denominador por denominador) y la técnica de cancelación para simplificar."
+        },
+        {
+          "dia": 10,
+          "titulo": "División de fracciones",
+          "objetivos": [
+            "Comprender el concepto de recíproco",
+            "Dividir fracciones usando la regla de la multiplicación cruzada"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Se introducirá la división de fracciones mediante la multiplicación por el recíproco, con ejemplos paso a paso."
+        },
+        {
+          "dia": 11,
+          "titulo": "Práctica de multiplicación y división",
+          "objetivos": [
+            "Resolver ejercicios de multiplicación y división",
+            "Aplicar cancelación y simplificación"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Ejercicios combinados que incluyen multiplicación y división de fracciones, con énfasis en simplificar resultados y usar la cancelación cuando sea posible."
+        },
+        {
+          "dia": 12,
+          "titulo": "Repaso general y resolución de problemas",
+          "objetivos": [
+            "Integrar todas las operaciones con fracciones",
+            "Resolver problemas aplicados de la vida real"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 50,
+          "resumen": "Sesión de repaso que combina todas las operaciones aprendidas, aplicándolas en problemas contextualizados (recetas, mediciones, repartos)."
+        },
+        {
+          "dia": 13,
+          "titulo": "Actividad lúdica de fracciones",
+          "objetivos": [
+            "Reforzar conceptos de forma interactiva",
+            "Aplicar fracciones en juegos y situaciones cotidianas"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 40,
+          "resumen": "Día de descanso activo con actividades ligeras como juegos de cartas con fracciones, problemas con pizzas o gráficos, y ejercicios interactivos en línea."
+        },
+        {
+          "dia": 14,
+          "titulo": "Evaluación final integral",
+          "objetivos": [
+            "Evaluar la competencia global en fracciones",
+            "Sintetizar el aprendizaje del plan completo"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 60,
+          "resumen": "Prueba comprensiva que incluye todos los temas vistos: equivalencia, comparación, ordenación, suma, resta, multiplicación, división y resolución de problemas con fracciones."
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 5,
+          "descripcion": "Mini prueba de conceptos iniciales (equivalencia y comparación)"
+        },
+        {
+          "dia": 8,
+          "descripcion": "Finalización de la unidad de suma y resta de fracciones"
+        },
+        {
+          "dia": 11,
+          "descripcion": "Dominio de multiplicación y división de fracciones"
+        },
+        {
+          "dia": 14,
+          "descripcion": "Evaluación final integral del plan de fracciones"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [
+        1
+      ],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 4,
+            "respuesta": "dibujo completado",
+            "correcto": false,
+            "timestamp": 1773423745.518766
+          },
+          {
+            "ejercicio": 5,
+            "respuesta": "Dividir 6÷2=3 y 9÷2=3 (no es posible, 9 no es divisible entre 2), La fracción resultante es 2/3, Identificar que 24 y 36 son divisibles entre 12, Dividir 24÷12=2 y 36÷12=3, Buscar divisores comunes de 24 y 36",
+            "correcto": false,
+            "timestamp": 1773489799.9252412
+          },
+          {
+            "ejercicio": 1,
+            "respuesta": "verdadero",
+            "correcto": true,
+            "timestamp": 1773489831.2550452
+          }
+        ]
+      },
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773423416.0881548,
+    "ultimo_acceso": 1773489831.2680604
   }
 }

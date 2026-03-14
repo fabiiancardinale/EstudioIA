@@ -51,6 +51,9 @@ class AnswerRequest(BaseModel):
     dia: int
     ejercicio_index: int
     respuesta: str
+    ejercicio_enunciado: Optional[str] = ""
+    ejercicio_opciones: Optional[list[str]] = []
+    ejercicio_respuesta_correcta: Optional[str] = ""
 
 
 class ChatRequest(BaseModel):
@@ -135,6 +138,9 @@ async def verificar_respuesta(req: AnswerRequest):
             ejercicio_index=req.ejercicio_index,
             respuesta=req.respuesta,
             plan=sesion["plan"],
+            ejercicio_enunciado=req.ejercicio_enunciado,
+            ejercicio_opciones=req.ejercicio_opciones,
+            ejercicio_respuesta_correcta=req.ejercicio_respuesta_correcta,
         )
 
         db.registrar_respuesta(

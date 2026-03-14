@@ -1546,3 +1546,307 @@ body {
     margin: 12px 0;
     color: var(--text-dim);
 }
+
+/* ═══ CANVAS DE DIBUJO ══════════════════════════════ */
+.canvas-container {
+    margin-top: 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.canvas-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.canvas-toolbar .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.canvas-toolbar .toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 4px;
+}
+
+.canvas-toolbar label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.color-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0;
+}
+
+.color-btn:hover {
+    transform: scale(1.15);
+}
+
+.color-btn.active {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.canvas-toolbar .tool-btn {
+    padding: 5px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.canvas-toolbar .tool-btn:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.canvas-toolbar .tool-btn.active {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.canvas-toolbar input[type="range"] {
+    width: 80px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.drawing-canvas {
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+    width: 100%;
+    height: 300px;
+}
+
+.canvas-hint {
+    padding: 8px 14px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* ═══ VERDADERO / FALSO ═════════════════════════════ */
+.vf-opciones {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.vf-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    border: 2px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.vf-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+}
+
+.vf-btn.selected {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+    color: var(--primary-light);
+}
+
+.vf-btn.vf-verdadero.selected {
+    border-color: var(--success);
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.vf-btn.vf-falso.selected {
+    border-color: var(--danger);
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+/* ═══ COMPLETAR (fill-in-the-blank) ═════════════════ */
+.completar-texto {
+    font-size: 1rem;
+    line-height: 2.2;
+    color: var(--text);
+    margin-top: 12px;
+}
+
+.completar-texto .blank-input {
+    display: inline-block;
+    min-width: 120px;
+    padding: 4px 10px;
+    background: var(--bg-card);
+    border: 1px dashed var(--primary);
+    border-radius: var(--radius-sm);
+    color: var(--primary-light);
+    font-family: inherit;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.completar-texto .blank-input:focus {
+    outline: none;
+    border-style: solid;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* ═══ ORDENAR (drag & drop) ═════════════════════════ */
+.ordenar-container {
+    margin-top: 12px;
+}
+
+.ordenar-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ordenar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: grab;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.ordenar-item:active {
+    cursor: grabbing;
+}
+
+.ordenar-item:hover {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+}
+
+.ordenar-item.dragging {
+    opacity: 0.5;
+    border-color: var(--primary);
+}
+
+.ordenar-item .drag-handle {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.ordenar-item .order-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ordenar-item .item-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+/* ═══ RELACIONAR (matching) ═════════════════════════ */
+.relacionar-container {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.relacionar-col h4 {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.relacionar-item {
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.relacionar-item:hover {
+    border-color: var(--primary);
+}
+
+.relacionar-item.selected {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+    color: var(--primary-light);
+}
+
+.relacionar-item.matched {
+    border-color: var(--success);
+    background: var(--success-bg);
+    color: var(--success);
+    cursor: default;
+}
+
+/* ═══ EJERCICIO TIPO BADGE ══════════════════════════ */
+.ejercicio-tipo-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+}
+
+.badge-dibujo { background: var(--info-bg); color: var(--info); }
+.badge-opcion_multiple { background: var(--primary-glow); color: var(--primary-light); }
+.badge-abierta { background: var(--warning-bg); color: var(--warning); }
+.badge-verdadero_falso { background: var(--success-bg); color: var(--success); }
+.badge-completar { background: rgba(253, 121, 168, 0.1); color: #fd79a8; }
+.badge-ordenar { background: rgba(0, 206, 209, 0.1); color: #00cec9; }

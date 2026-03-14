@@ -75,6 +75,81 @@ function simpleMarkdown(text) {
         .replace(/$/, '</p>');
 }
 
+/**
+ * Renderiza fórmulas LaTeX/KaTeX en un elemento del DOM.
+ * Busca expresiones entre $...$ (inline) y $$...$$ (bloque)
+ * También detecta \frac, \sqrt, etc. sueltos y los envuelve.
+ */
+function renderMath(element) {
+    if (!element || typeof renderMathInElement !== 'function') return;
+    try {
+        // Pre-proceso: envolver comandos LaTeX sueltos (sin $) en delimitadores
+        wrapBareLatex(element);
+
+        renderMathInElement(element, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true },
+            ],
+            throwOnError: false,
+            trust: true,
+        });
+    } catch (e) {
+        console.log('KaTeX render error:', e);
+    }
+}
+
+/**
+ * Detecta comandos LaTeX sueltos (no envueltos en $) y los envuelve.
+ * Ej: \frac{a}{b} → $\frac{a}{b}$
+ */
+function wrapBareLatex(element) {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    const nodesToReplace = [];
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text = node.textContent;
+        // Detectar comandos LaTeX sueltos que no estén ya entre $
+        if (/\\(?:frac|sqrt|int|sum|prod|lim|infty|partial|nabla|alpha|beta|gamma|delta|theta|pi|sigma|omega|text|mathrm|mathbf|left|right|begin|end|cdot|times|div|pm|leq|geq|neq|approx|vec|hat|bar|dot)\b/.test(text) && !(/\$/.test(text))) {
+            nodesToReplace.push(node);
+        }
+    }
+
+    nodesToReplace.forEach(node => {
+        const text = node.textContent;
+        // Envolver toda la línea con contenido LaTeX en $...$
+        const wrapped = text.replace(/((?:\\[a-zA-Z]+(?:\{[^}]*\})*(?:\s*\\[a-zA-Z]+(?:\{[^}]*\})*)*(?:\s*[=+\-<>]?\s*\d*\.?\d*)*)+)/g, (match) => {
+            if (/\\[a-zA-Z]/.test(match)) {
+                return '$' + match.trim() + '$';
+            }
+            return match;
+        });
+        if (wrapped !== text) {
+            const span = document.createElement('span');
+            span.innerHTML = wrapped;
+            node.parentNode.replaceChild(span, node);
+        }
+    });
+}
+
+/**
+ * Renderiza KaTeX en todos los contenidos dinámicos de la página.
+ */
+function renderAllMath() {
+    const targets = [
+        'dia-explicacion', 'dia-ejemplos', 'dia-ejercicios',
+        'dia-conceptos', 'dia-dato', 'chat-messages',
+        'chatbot-messages', 'quiz-preguntas', 'quiz-resultado',
+    ];
+    targets.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) renderMath(el);
+    });
+}
+
 // ═══ INICIO ═════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     cargarSesiones();
@@ -350,6 +425,9 @@ function mostrarContenidoDia(contenido, dia) {
     $('dia-dato').textContent = c.dato_curioso || '';
     $('seccion-dato').style.display = c.dato_curioso ? 'block' : 'none';
 
+    // Renderizar fórmulas matemáticas
+    setTimeout(() => renderAllMath(), 200);
+
     // Scroll arriba
     $('main-content').scrollTop = 0;
 }
@@ -443,8 +521,12 @@ function renderEjercicioInput(ej, idx) {
                     </div>
                     <canvas class="drawing-canvas" id="canvas-${idx}" width="700" height="300"></canvas>
                     <div class="canvas-hint">🖱️ Dibuja aquí tu respuesta · Usa las herramientas de arriba para cambiar color y grosor</div>
+                    <div class="canvas-describe">
+                        <label for="canvas-desc-${idx}">📝 Describe brevemente lo que dibujaste (la IA evalúa tu descripción):</label>
+                        <textarea id="canvas-desc-${idx}" class="canvas-desc-input" rows="2" placeholder="Ej: Dibujé un círculo dividido en 4 partes iguales y coloreé 3 de ellas..."></textarea>
+                    </div>
                 </div>
-                <input type="hidden" id="resp-${idx}" value="dibujo_completado">
+                <input type="hidden" id="resp-${idx}" value="">
             `;
 
         case 'abierta':
@@ -673,13 +755,20 @@ async function verificarRespuesta(idx) {
         respuesta = recogerCompletarRespuesta(idx);
         $(`resp-${idx}`).value = respuesta;
     } else if (tipo === 'dibujo') {
-        // Para dibujo, verificamos que haya dibujado algo
+        // Para dibujo, verificamos que haya dibujado algo Y descrito
         const st = canvasStates[idx];
         if (!st || !st.hasDrawn) {
             toast('Dibuja tu respuesta primero', 'error');
             return;
         }
-        respuesta = 'El estudiante ha realizado un dibujo en el canvas';
+        const descEl = $(`canvas-desc-${idx}`);
+        const descripcion = descEl ? descEl.value.trim() : '';
+        if (!descripcion) {
+            toast('Describe brevemente lo que dibujaste para que la IA pueda evaluarlo', 'error');
+            if (descEl) descEl.focus();
+            return;
+        }
+        respuesta = descripcion;
     } else {
         respuesta = $(`resp-${idx}`).value.trim();
     }
@@ -696,31 +785,35 @@ async function verificarRespuesta(idx) {
     feedbackEl.className = 'ejercicio-feedback';
 
     try {
-        // Para ejercicios de dibujo, evaluamos localmente
+        // Para ejercicios de dibujo, enviar descripción a la IA para evaluación real
         if (tipo === 'dibujo') {
-            feedbackEl.className = 'ejercicio-feedback feedback-correcto';
-            feedbackEl.innerHTML = `
-                <strong>✅ ¡Buen trabajo!</strong>
-                <div class="feedback-detail">Has completado el ejercicio de dibujo. La respuesta esperada era: <strong>${ejercicio.respuesta_correcta || ''}</strong></div>
-                <div class="feedback-detail">Compara tu dibujo con la descripción y verifica que coincida. Si necesitas mejorar, puedes limpiar el canvas e intentar de nuevo.</div>
-                <div class="feedback-detail">💡 Recuerda: la práctica visual ayuda mucho a entender conceptos abstractos.</div>
-            `;
-            ejercicioEl.classList.add('correcto');
-
-            // Registrar en el backend
-            await api('/api/verificar', {
+            const resultado = await api('/api/verificar', {
                 method: 'POST',
                 body: {
                     session_id: state.sessionId,
                     dia: state.diaActual,
                     ejercicio_index: idx,
-                    respuesta: 'dibujo completado',
+                    respuesta: respuesta,
                     ejercicio_enunciado: ejercicio ? ejercicio.enunciado : '',
                     ejercicio_opciones: [],
                     ejercicio_respuesta_correcta: ejercicio ? (ejercicio.respuesta_correcta || '') : '',
                 },
-            }).catch(() => {});
+            });
 
+            const correcto = resultado.correcto;
+            ejercicioEl.classList.add(correcto ? 'correcto' : 'incorrecto');
+
+            feedbackEl.className = `ejercicio-feedback ${correcto ? 'feedback-correcto' : 'feedback-incorrecto'}`;
+            feedbackEl.innerHTML = `
+                <strong>${correcto ? '✅ ¡Correcto!' : '❌ Tu dibujo necesita ajustes'}</strong>
+                ${resultado.feedback ? `<div class="feedback-detail">${resultado.feedback}</div>` : ''}
+                ${resultado.respuesta_correcta ? `<div class="feedback-detail"><strong>Lo esperado:</strong> ${resultado.respuesta_correcta}</div>` : ''}
+                ${resultado.explicacion_paso_a_paso ? `<div class="feedback-detail"><strong>Explicación:</strong> ${resultado.explicacion_paso_a_paso}</div>` : ''}
+                ${resultado.consejo ? `<div class="feedback-detail">💡 ${resultado.consejo}</div>` : ''}
+                ${!correcto ? `<div class="feedback-detail">🎨 Puedes limpiar el canvas, corregir tu dibujo y verificar de nuevo.</div>` : ''}
+            `;
+
+            renderMath(feedbackEl);
             actualizarBarraProgreso();
             return;
         }
@@ -750,6 +843,7 @@ async function verificarRespuesta(idx) {
             ${resultado.consejo ? `<div class="feedback-detail">💡 ${resultado.consejo}</div>` : ''}
         `;
 
+        renderMath(feedbackEl);
         actualizarBarraProgreso();
     } catch (err) {
         feedbackEl.className = 'ejercicio-feedback feedback-incorrecto';
@@ -814,6 +908,9 @@ function mostrarQuiz(quiz) {
     // Timer
     const tiempoMin = quiz.tiempo_limite_minutos || 15;
     iniciarTimer(tiempoMin * 60);
+
+    // Renderizar fórmulas en quiz
+    setTimeout(() => renderMath($('quiz-preguntas')), 200);
 }
 
 function seleccionarQuizOpcion(preguntaIdx, opcionIdx, element) {
@@ -951,6 +1048,9 @@ function mostrarResultadoQuiz(resultado) {
             </button>
         </div>
     `;
+
+    // Renderizar fórmulas en resultado del quiz
+    setTimeout(() => renderMath($('quiz-resultado')), 200);
 }
 
 // ═══ CHAT TUTOR ═════════════════════════════════════
@@ -1003,6 +1103,7 @@ async function enviarChat() {
         const typingEl = document.getElementById(typingId);
         if (typingEl) {
             typingEl.querySelector('.msg-bubble').innerHTML = simpleMarkdown(data.respuesta);
+            renderMath(typingEl);
         }
     } catch (err) {
         const typingEl = document.getElementById(typingId);
@@ -1087,6 +1188,7 @@ async function enviarChatLeccion() {
         const typingEl = document.getElementById(typingId);
         if (typingEl) {
             typingEl.querySelector('.msg-bubble').innerHTML = simpleMarkdown(data.respuesta);
+            renderMath(typingEl);
         }
     } catch (err) {
         const typingEl = document.getElementById(typingId);

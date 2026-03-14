@@ -117,6 +117,10 @@ Asegúrate de que haya {total_dias} días en el plan."""
         system = """Eres un tutor experto que crea lecciones completas, detalladas y pedagógicamente excelentes.
 Tus explicaciones son claras, con muchos ejemplos y analogías del mundo real.
 Adaptas todo al nivel del estudiante.
+IMPORTANTE para fórmulas matemáticas: usa delimitadores KaTeX con signo de dólar:
+- Inline: $f(x) = x^2$ (un $ a cada lado)
+- Bloque: $$\\int_0^1 f(x)\\,dx$$ (doble $$ a cada lado)
+- NUNCA uses \\frac, \\sqrt u otros comandos LaTeX sueltos sin envolver en $...$
 Responde SOLO con JSON válido."""
 
         user = f"""Genera una lección COMPLETA y DETALLADA de estudio para:
@@ -241,9 +245,15 @@ REGLAS CRÍTICAS:
         system = """Eres un corrector educativo justo y motivador.
 Evalúa respuestas comparándolas con la respuesta correcta proporcionada.
 IMPORTANTE: Si se proporciona la respuesta correcta esperada, úsala como referencia principal para evaluar.
+Para fórmulas matemáticas en tu explicación, usa delimitadores KaTeX: $f(x)$ para inline, $$f(x)$$ para bloque. Nunca uses \\frac suelto sin $...$
 Para ejercicios de verdadero/falso, la respuesta será "verdadero" o "falso".
 Para ejercicios de completar, la respuesta será las palabras separadas por comas.
 Para ejercicios de ordenar, la respuesta será los elementos en el orden dado por el estudiante, separados por comas.
+Para ejercicios de DIBUJO, el estudiante describe lo que dibujó en texto. Evalúa si la descripción coincide con lo que se pedía:
+  - Compara los elementos clave mencionados en la descripción del estudiante vs la respuesta esperada
+  - Si la descripción menciona los elementos principales del dibujo esperado, marca como correcto
+  - Si la descripción es vaga, incompleta o no coincide con lo pedido, marca como incorrecto y explica qué falta
+  - Sé específico sobre qué elementos incluyó bien y cuáles le faltan
 Responde SOLO con JSON válido."""
 
         user = f"""Evalúa esta respuesta de un estudiante:
@@ -284,7 +294,11 @@ Sé motivador incluso si la respuesta es incorrecta."""
 
         system = """Eres un experto en evaluación educativa.
 Creas pruebas justas que miden comprensión real.
-Responde SOLO con JSON válido."""
+Responde SOLO con JSON válido.
+IMPORTANTE para fórmulas matemáticas: usa delimitadores KaTeX:
+- Inline: $f(x) = x^2$ (un signo de dólar a cada lado)
+- Bloque: $$\\int_0^1 f(x)\\,dx$$ (doble signo de dólar)
+- NUNCA uses \\frac, \\sqrt sueltos sin $ alrededor."""
 
         user = f"""Genera una mini prueba para evaluar al estudiante:
 - Materia: {materia}
@@ -318,7 +332,11 @@ Genera 5 preguntas de opción múltiple con dificultad variada."""
     # ── Corregir Quiz ────────────────────────────────
     async def corregir_quiz(self, materia: str, tema: str, respuestas: list) -> dict:
         system = """Eres un corrector educativo. Evalúa las respuestas de un quiz.
-Responde SOLO con JSON válido."""
+Responde SOLO con JSON válido.
+IMPORTANTE para fórmulas matemáticas: usa delimitadores KaTeX:
+- Inline: $f(x) = x^2$ (un signo de dólar a cada lado)
+- Bloque: $$\\int_0^1 f(x)\\,dx$$ (doble signo de dólar)
+- NUNCA uses \\frac, \\sqrt sueltos sin $ alrededor."""
 
         user = f"""Corrige este quiz:
 - Materia: {materia}
@@ -366,6 +384,11 @@ Reglas:
 - Sé motivador y paciente
 - Usa emojis ocasionalmente para ser más amigable
 - Responde en español
+- IMPORTANTE para fórmulas matemáticas: usa delimitadores KaTeX:
+  * Fórmulas inline: $f(x) = x^2$ (un solo signo de dólar a cada lado)
+  * Fórmulas en bloque: $$\\int_0^1 f(x)\\,dx$$ (doble signo de dólar a cada lado)
+  * NUNCA uses \\( \\) ni \\[ \\] ni \\frac sueltos sin delimitadores $
+  * Ejemplos correctos: $\\frac{{a}}{{b}}$, $x^2 + y^2 = r^2$, $$\\sum_{{i=1}}^n i = \\frac{{n(n+1)}}{{2}}$$
 
 Historial de conversación:
 {historial_str}"""

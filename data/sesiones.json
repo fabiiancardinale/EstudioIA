@@ -987,5 +987,148 @@
     "chat_historial": [],
     "creado": 1773423416.0881548,
     "ultimo_acceso": 1773489831.2680604
+  },
+  "97c604ab": {
+    "id": "97c604ab",
+    "materia": "matematicas",
+    "tema": "ecuaciones diferenciales",
+    "semanas": 1,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de ecuaciones diferenciales",
+      "descripcion": "Introducción completa a ecuaciones diferenciales para principiantes, cubriendo conceptos básicos, clasificación, métodos de solución y aplicaciones prácticas.",
+      "total_dias": 7,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción a las ecuaciones diferenciales",
+          "objetivos": [
+            "Comprender qué es una ecuación diferencial",
+            "Diferenciar entre ecuaciones ordinarias y parciales",
+            "Identificar orden y grado"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Conceptos fundamentales, definiciones, clasificación básica y ejemplos de ecuaciones diferenciales en la vida real."
+        },
+        {
+          "dia": 2,
+          "titulo": "Ecuaciones diferenciales de primer orden",
+          "objetivos": [
+            "Resolver ecuaciones separables",
+            "Aplicar el método de variables separables",
+            "Reconocer ecuaciones homogéneas"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios prácticos de ecuaciones diferenciales de primer orden con variables separables, incluyendo problemas de aplicación."
+        },
+        {
+          "dia": 3,
+          "titulo": "Ecuaciones lineales de primer orden",
+          "objetivos": [
+            "Identificar ecuaciones lineales",
+            "Aplicar el factor integrante",
+            "Resolver problemas de mezclas y crecimiento"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Teoría de ecuaciones lineales de primer orden, factor integrante y aplicaciones a problemas de modelado básico."
+        },
+        {
+          "dia": 4,
+          "titulo": "Mini evaluación y repaso",
+          "objetivos": [
+            "Evaluar comprensión de conceptos básicos",
+            "Reforzar métodos de solución",
+            "Identificar áreas de mejora"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 40,
+          "resumen": "Prueba corta sobre ecuaciones de primer orden seguida de repaso guiado de conceptos clave."
+        },
+        {
+          "dia": 5,
+          "titulo": "Ecuaciones exactas y aplicaciones",
+          "objetivos": [
+            "Reconocer ecuaciones exactas",
+            "Aplicar criterio de exactitud",
+            "Resolver problemas de física básica"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios de ecuaciones exactas y aplicaciones prácticas a problemas de caída libre, circuitos simples y decaimiento."
+        },
+        {
+          "dia": 6,
+          "titulo": "Repaso general y problemas integradores",
+          "objetivos": [
+            "Integrar todos los métodos aprendidos",
+            "Resolver problemas combinados",
+            "Preparar para evaluación final"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 45,
+          "resumen": "Sesión de repaso completo con problemas que combinan diferentes tipos de ecuaciones diferenciales de primer orden."
+        },
+        {
+          "dia": 7,
+          "titulo": "Actividad de aplicación creativa",
+          "objetivos": [
+            "Aplicar conocimientos a situaciones novedosas",
+            "Desarrollar pensamiento matemático",
+            "Relacionar con otras disciplinas"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 40,
+          "resumen": "Actividad ligera de modelado matemático donde se proponen y resuelven problemas de ecuaciones diferenciales en contextos cotidianos."
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 4,
+          "descripcion": "Mini evaluación de mitad de semana"
+        },
+        {
+          "dia": 7,
+          "descripcion": "Primera evaluación parcial y cierre del módulo básico"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 4,
+            "respuesta": "dibujo completado",
+            "correcto": false,
+            "timestamp": 1773498428.4621394
+          }
+        ]
+      },
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [
+      {
+        "usuario": "haceme una ecuacion resuelta (Estoy en el día 1 de la lección)",
+        "tutor": "¡Hola! 👋 ¡Bienvenido al día 1 de ecuaciones diferenciales! Empecemos con algo sencillo para que entiendas la idea básica. 😊\n\n**Ecuación diferencial más simple:**\n\\[\n\\frac{dy}{dx} = 2x\n\\]\n\n**¿Qué significa esto?**\n- Nos dice que la **tasa de cambio** de \\(y\\) respecto a \\(x\\) (es decir, cuánto cambia \\(y\\) cuando \\(x\\) cambia) es igual a \\(2x\\).\n- Es como si te dijeran: \"La velocidad a la que crece \\(y\\) es el doble del valor de \\(x\\)\".\n\n**Resolviéndola paso a paso:**\n\n1. **Reescribimos la ecuación:**\n   \\[\n   dy = 2x \\, dx\n   \\]\n   (Multiplicamos ambos lados por \\(dx\\) para separar las variables)\n\n2. **Integramos ambos lados:**\n   \\[\n   \\int dy = \\int 2x \\, dx\n   \\]\n   La integral de \\(dy\\) es \\(y\\), y la integral de \\(2x\\) es \\(x^2\\) (más una constante).\n\n3. **Resultado:**\n   \\[\n   y = x^2 + C\n   \\]\n   Donde \\(C\\) es una constante (un número cualquiera).\n\n**¿Qué representa \\(C\\)?**\n- Como la derivada de una constante es cero, hay infinitas funciones que satisfacen la ecuación: \\(y = x^2 + 1\\), \\(y = x^2 - 5\\), etc.\n- \\(C\\) se determina si conocemos un punto específico por donde pasa la función (condición inicial).\n\n**Ejemplo con condición inicial:**\nSi además sabemos que cuando \\(x = 1\\), \\(y = 4\\), sustituimos:\n\\[\n4 = 1^2 + C \\implies C = 3\n\\]\nEntonces la solución particular es:\n\\[\ny = x^2 + 3\n\\]\n\n**📝 Resumen:**\n- Una ecuación diferencial relaciona una función con sus derivadas.\n- Resolverla significa encontrar la función original.\n- La solución general tiene una constante \\(C\\).\n- Con una condición inicial, encontramos una solución única.\n\n¿Quieres que hagamos otro ejemplo juntos? ¡O puedes intentar resolver tú uno similar! 🚀",
+        "timestamp": 1773497608.239827
+      },
+      {
+        "usuario": "explicame como si tuviera 10 años (Estoy en el día 1 de la lección)",
+        "tutor": "¡Hola, amigo! 👋 ¡Claro que sí! Te voy a explicar las ecuaciones diferenciales como si fueran una **receta mágica para descubrir secretos**. 🧙‍♂️✨\n\n---\n\n### **Imagina esto:**\nTienes un **carrito de juguete** que se mueve en una pista.  \nAlguien te dice:  \n*\"El carrito acelera el doble de la distancia que ha recorrido.\"* 🚗💨\n\nEsa es una **pista secreta** sobre cómo se mueve el carrito.  \nUna **ecuación diferencial** es como esa pista: **nos dice cómo cambia algo** (velocidad, crecimiento, etc.) en relación con otra cosa.\n\n---\n\n### **Ejemplo superfácil:**\n**Pista:** *\"Por cada año que cumples, tu planta crece 5 centímetros.\"* 🌱📏\n\nEsto en matemáticas se escribe:\n\\[\n\\frac{d(\\text{altura})}{d(\\text{tiempo})} = 5\n\\]\nQue significa: **La velocidad de crecimiento es 5 cm por año**.\n\n---\n\n### **¿Cómo descubrimos la altura?**\n1. **Pensamos:** Si cada año crece 5 cm, en 1 año crece 5 cm, en 2 años crece 10 cm... ¡es como multiplicar!\n2. **Integramos** (que es solo una palabra fancy para \"sumar todos los crecimientos\"):\n   \\[\n   \\text{Altura} = 5 \\times (\\text{años}) + \\text{altura inicial}\n   \\]\n3. Si la planta medía 10 cm al empezar:\n   \\[\n   \\text{Altura} = 5t + 10\n   \\]\n   (donde \\(t\\) son los años).\n\n---\n\n### **¡Tu primer ecuación diferencial resuelta!** 🎉\nLa **pista** era: *\"Crece 5 cm por año\"* (eso es la ecuación diferencial).  \nLa **solución** es: *\"Altura = 5 × años + altura inicial\"* (eso es lo que descubrimos).\n\n---\n\n### **¿Por qué hay una \"altura inicial\"?**\n¡Porque la pista solo nos dice **cuánto crece**, no cuánto medía al principio!  \nSi no sabemos eso, hay muchas plantas posibles: una que empezó en 10 cm, otra en 20 cm... por eso ponemos **+ C** (la constante).\n\n---\n\n### **Resumen para tu cerebro de 10 años:**\n1. **Ecuación diferencial** = Una pista sobre cómo cambian las cosas.\n2. **Resolver** = Usar la pista para descubrir la historia completa.\n3. **+ C** = Porque falta un dato inicial (como la altura al empezar).\n\n---\n\n### **¿Quieres jugar?**\nTe doy una pista:  \n*\"Por cada helado que comes, tu felicidad aumenta 3 puntos.\"* 🍦😊  \nSi empezaste con 10 puntos de felicidad, ¿cuántos tendrás después de 4 helados?\n\n**¡Adivina la fórmula!**  \n(Spoiler: Felicidad = 3 × helados + 10)\n\n---\n\n¿Te gustó la explicación? ¿Quieres que juguemos con más ejemplos así? 😄",
+        "timestamp": 1773497686.577973
+      },
+      {
+        "usuario": "dame un ejemplo mas sencillpo (Estoy en el día 1 de la lección)",
+        "tutor": "¡Perfecto! 😊 Vamos con el ejemplo **más sencillo del universo**. Imagina que esto es como jugar a las **pistas matemáticas**. 🕵️‍♂️\n\n---\n\n### **La situación:**\nTienes un **frasco de canicas** que se está llenando.  \nTu mamá te dice:  \n*\"En el frasco entran **2 canicas por segundo**.\"* 🎯⏱️\n\nEsa es tu **ecuación diferencial**:  \nTe está diciendo **cómo cambia** el número de canicas respecto al tiempo.\n\nEn matemáticas se escribe:\n\\[\n\\frac{d(\\text{canicas})}{d(\\text{tiempo})} = 2\n\\]\nQue solo significa: **\"La velocidad a la que entran canicas es 2 por segundo\"**.\n\n---\n\n### **Resolverlo (¡es facilísimo!):**\n1. **Piensa:** Si cada segundo entran 2 canicas...\n   - En 1 segundo → 2 canicas\n   - En 2 segundos → 4 canicas\n   - En 3 segundos → 6 canicas\n   ¡Es como multiplicar el tiempo por 2!\n\n2. **Pero falta algo:** ¿El frasco empezó vacío o ya tenía canicas?  \n   Si empezó **vacío**:  \n   \\[\n   \\text{Canicas} = 2 \\times \\text{segundos}\n   \\]  \n   Si empezó con **3 canicas**:  \n   \\[\n   \\text{Canicas} = 2 \\times \\text{segundos} + 3\n   \\]\n\n3. **La solución general** (por si no sabemos cuántas había al inicio):\n   \\[\n   \\text{Canicas} = 2t + C\n   \\]\n   Donde \\(C\\) son las canicas que ya había. ¡Esa es la **constante mágica**! ✨\n\n---\n\n### **📝 Resumen visual:**\n- **Ecuación diferencial:** \"Entran 2 canicas/segundo\" → \\(\\frac{dc}{dt} = 2\\)\n- **Resolver:** \"Canicas = 2 × segundos + canicas iniciales\" → \\(c = 2t + C\\)\n- **Si sabemos que al inicio había 5 canicas:** \\(c = 2t + 5\\)\n\n---\n\n### **¡Ahora tú!** 🎮\nTe doy esta pista:  \n*\"Tu alcancía gana **10 pesos por día**.\"* 💰📅\n\n1. ¿Cuál es la ecuación diferencial?  \n   (Respuesta: \\(\\frac{d(\\text{pesos})}{d(\\text{días})} = 10\\))\n\n2. Si empezó con 50 pesos, ¿cuánto hay después de 7 días?  \n   (Respuesta: \\(10 \\times 7 + 50 = 120\\) pesos)\n\n---\n\n¿Ves? ¡Las ecuaciones diferenciales solo son **instrucciones de cambio**! 😄  \n¿Quieres otro ejemplo así o probamos algo un poquitín más interesante?",
+        "timestamp": 1773503061.2726524
+      }
+    ],
+    "creado": 1773497266.6396458,
+    "ultimo_acceso": 1773519727.0297174
   }
 }

@@ -12,6 +12,8 @@ let state = {
     quizActual: null,
     timerInterval: null,
     timerSeconds: 0,
+    user: null,
+    token: null,
 };
 
 // ═══ UTILIDADES ═════════════════════════════════════
@@ -19,8 +21,13 @@ const API = '';
 
 async function api(endpoint, options = {}) {
     const url = `${API}${endpoint}`;
+    const headers = { 'Content-Type': 'application/json' };
+    // Adjuntar token de autenticación si existe
+    if (state.token) {
+        headers['Authorization'] = `Bearer ${state.token}`;
+    }
     const config = {
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         ...options,
     };
     if (config.body && typeof config.body === 'object') {
@@ -152,9 +159,152 @@ function renderAllMath() {
 
 // ═══ INICIO ═════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-    cargarSesiones();
+    // Configurar formularios de auth
+    $('form-login').addEventListener('submit', handleLogin);
+    $('form-register').addEventListener('submit', handleRegister);
     $('form-plan').addEventListener('submit', crearPlan);
+
+    // Verificar si hay sesión guardada
+    checkSavedAuth();
 });
+
+// ═══ AUTENTICACIÓN ══════════════════════════════════
+function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
+    $('form-login').style.display = tab === 'login' ? 'block' : 'none';
+    $('form-register').style.display = tab === 'register' ? 'block' : 'none';
+    $('login-error').textContent = '';
+    $('register-error').textContent = '';
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = $('login-email').value.trim();
+    const password = $('login-password').value;
+    $('login-error').textContent = '';
+
+    try {
+        const data = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+        const result = await data.json();
+
+        if (!data.ok) {
+            $('login-error').textContent = result.detail || 'Error al iniciar sesión';
+            return;
+        }
+
+        // Guardar sesión
+        state.token = result.token;
+        state.user = { id: result.id, nombre: result.nombre, email: result.email };
+        localStorage.setItem('estudioia_token', result.token);
+        localStorage.setItem('estudioia_user', JSON.stringify(state.user));
+
+        enterApp();
+    } catch (err) {
+        $('login-error').textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const nombre = $('reg-nombre').value.trim();
+    const email = $('reg-email').value.trim();
+    const password = $('reg-password').value;
+    const password2 = $('reg-password2').value;
+    $('register-error').textContent = '';
+
+    if (password !== password2) {
+        $('register-error').textContent = 'Las contraseñas no coinciden';
+        return;
+    }
+
+    try {
+        const data = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, email, password }),
+        });
+        const result = await data.json();
+
+        if (!data.ok) {
+            $('register-error').textContent = result.detail || 'Error al crear cuenta';
+            return;
+        }
+
+        // Auto-login después de registro
+        state.token = result.token;
+        state.user = { id: result.id, nombre: result.nombre, email: result.email };
+        localStorage.setItem('estudioia_token', result.token);
+        localStorage.setItem('estudioia_user', JSON.stringify(state.user));
+
+        toast('¡Cuenta creada con éxito! 🎉', 'success');
+        enterApp();
+    } catch (err) {
+        $('register-error').textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+}
+
+async function checkSavedAuth() {
+    const savedToken = localStorage.getItem('estudioia_token');
+    const savedUser = localStorage.getItem('estudioia_user');
+
+    if (savedToken && savedUser) {
+        state.token = savedToken;
+        state.user = JSON.parse(savedUser);
+
+        // Verificar que el token siga siendo válido
+        try {
+            const res = await fetch('/api/me', {
+                headers: { 'Authorization': `Bearer ${savedToken}` },
+            });
+            if (res.ok) {
+                enterApp();
+                return;
+            }
+        } catch (e) {
+            // Token inválido
+        }
+        // Limpiar si el token es inválido
+        localStorage.removeItem('estudioia_token');
+        localStorage.removeItem('estudioia_user');
+        state.token = null;
+        state.user = null;
+    }
+
+    // Mostrar pantalla de auth
+    showScreen('screen-auth');
+}
+
+function enterApp() {
+    // Actualizar saludo
+    $('user-greeting').textContent = `👋 ¡Hola, ${state.user.nombre}!`;
+    showScreen('screen-home');
+    cargarSesiones();
+}
+
+function logout() {
+    state.token = null;
+    state.user = null;
+    state.sessionId = null;
+    state.plan = null;
+    localStorage.removeItem('estudioia_token');
+    localStorage.removeItem('estudioia_user');
+    showScreen('screen-auth');
+    // Limpiar formularios
+    $('login-email').value = '';
+    $('login-password').value = '';
+    $('reg-nombre').value = '';
+    $('reg-email').value = '';
+    $('reg-password').value = '';
+    $('reg-password2').value = '';
+    $('login-error').textContent = '';
+    $('register-error').textContent = '';
+    toast('Sesión cerrada', 'info');
+}
 
 // ═══ CARGAR SESIONES EXISTENTES ═════════════════════
 async function cargarSesiones() {
@@ -417,6 +567,13 @@ function mostrarContenidoDia(contenido, dia) {
         if (ej.tipo === 'ordenar') {
             setTimeout(() => initSortable(i), 100);
         }
+        // Auto-abrir teclados especiales
+        if (ej.teclado_especial) {
+            setTimeout(() => {
+                const body = $(`teclado-body-${i}`);
+                if (body) body.classList.add('visible');
+            }, 100);
+        }
     });
 
     $('seccion-ejercicios').style.display = ejercicios.length > 0 ? 'block' : 'none';
@@ -475,7 +632,8 @@ function renderEjercicioInput(ej, idx) {
             });
             completarHTML += '</div>';
             completarHTML += `<input type="hidden" id="resp-${idx}" value="">`;
-            return completarHTML;
+            const tecladoHTML_completar = renderTecladoEspecial(ej, idx);
+            return completarHTML + tecladoHTML_completar;
 
         case 'ordenar':
             const items = ej.opciones || [];
@@ -520,9 +678,9 @@ function renderEjercicioInput(ej, idx) {
                         </div>
                     </div>
                     <canvas class="drawing-canvas" id="canvas-${idx}" width="700" height="300"></canvas>
-                    <div class="canvas-hint">🖱️ Dibuja aquí tu respuesta · Usa las herramientas de arriba para cambiar color y grosor</div>
+                    <div class="canvas-hint">🖱️ Dibuja aquí tu respuesta · La IA analizará directamente tu dibujo 🤖👁️</div>
                     <div class="canvas-describe">
-                        <label for="canvas-desc-${idx}">📝 Describe brevemente lo que dibujaste (la IA evalúa tu descripción):</label>
+                        <label for="canvas-desc-${idx}">📝 (Opcional) Describe brevemente tu dibujo para ayudar a la IA:</label>
                         <textarea id="canvas-desc-${idx}" class="canvas-desc-input" rows="2" placeholder="Ej: Dibujé un círculo dividido en 4 partes iguales y coloreé 3 de ellas..."></textarea>
                     </div>
                 </div>
@@ -531,12 +689,124 @@ function renderEjercicioInput(ej, idx) {
 
         case 'abierta':
         default:
+            const tecladoHTML_abierta = renderTecladoEspecial(ej, idx);
             return `
                 <div class="ejercicio-input-area">
                     <input type="text" id="resp-${idx}" placeholder="Escribe tu respuesta..."
                            onkeypress="if(event.key==='Enter')verificarRespuesta(${idx})">
                 </div>
+                ${tecladoHTML_abierta}
             `;
+    }
+}
+
+// ═══ TECLADO VIRTUAL ESPECIAL ═══════════════════════
+/**
+ * Renderiza un teclado virtual con caracteres especiales si el ejercicio lo requiere.
+ * El ejercicio debe tener un campo teclado_especial: { titulo, caracteres: [[...], [...]] }
+ */
+function renderTecladoEspecial(ejercicio, idx) {
+    const teclado = ejercicio.teclado_especial;
+    if (!teclado || !teclado.caracteres || !Array.isArray(teclado.caracteres)) return '';
+
+    const titulo = teclado.titulo || 'Teclado Especial';
+    const filas = teclado.caracteres;
+
+    let filasHTML = filas.map(fila => {
+        if (!Array.isArray(fila)) return '';
+        const teclas = fila.map(c => 
+            `<button type="button" class="tecla-especial" onclick="insertarCaracter(${idx}, '${c.replace(/'/g, "\\'")}', '${ejercicio.tipo || 'abierta'}')">${c}</button>`
+        ).join('');
+        return `<div class="teclado-fila">${teclas}</div>`;
+    }).join('');
+
+    return `
+        <div class="teclado-especial-container" id="teclado-${idx}">
+            <div class="teclado-header" onclick="toggleTeclado(${idx})">
+                <span>⌨️ ${titulo}</span>
+                <span class="teclado-toggle">▼</span>
+            </div>
+            <div class="teclado-body" id="teclado-body-${idx}">
+                <div class="teclado-filas">
+                    ${filasHTML}
+                </div>
+                <div class="teclado-acciones">
+                    <button type="button" class="btn-teclado-accion" onclick="tecladoBorrar(${idx}, '${ejercicio.tipo || 'abierta'}')">⌫ Borrar</button>
+                    <button type="button" class="btn-teclado-accion" onclick="tecladoEspacio(${idx}, '${ejercicio.tipo || 'abierta'}')">␣ Espacio</button>
+                    <button type="button" class="btn-teclado-accion btn-teclado-limpiar" onclick="tecladoLimpiar(${idx}, '${ejercicio.tipo || 'abierta'}')">🗑️ Limpiar</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function toggleTeclado(idx) {
+    const body = $(`teclado-body-${idx}`);
+    if (body) {
+        body.classList.toggle('visible');
+    }
+}
+
+/** Determina el input activo para un ejercicio (soporte abierta y completar) */
+function getTargetInput(idx, tipo) {
+    if (tipo === 'completar') {
+        // Para completar, buscar el último blank-input que tenga focus, o el primero vacío
+        const blanks = document.querySelectorAll(`[id^="blank-${idx}-"]`);
+        // Verificar si alguno tiene focus
+        for (const b of blanks) {
+            if (b === document.activeElement) return b;
+        }
+        // Si no, buscar el primero vacío
+        for (const b of blanks) {
+            if (!b.value.trim()) return b;
+        }
+        // Si todos llenos, devolver el último
+        return blanks.length > 0 ? blanks[blanks.length - 1] : null;
+    }
+    return $(`resp-${idx}`);
+}
+
+function insertarCaracter(idx, caracter, tipo) {
+    const input = getTargetInput(idx, tipo);
+    if (!input) return;
+    
+    // Insertar en posición del cursor
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const val = input.value;
+    input.value = val.substring(0, start) + caracter + val.substring(end);
+    input.selectionStart = input.selectionEnd = start + caracter.length;
+    input.focus();
+}
+
+function tecladoBorrar(idx, tipo) {
+    const input = getTargetInput(idx, tipo);
+    if (!input || !input.value) return;
+    
+    const start = input.selectionStart;
+    const val = input.value;
+    if (start > 0) {
+        input.value = val.substring(0, start - 1) + val.substring(start);
+        input.selectionStart = input.selectionEnd = start - 1;
+    }
+    input.focus();
+}
+
+function tecladoEspacio(idx, tipo) {
+    insertarCaracter(idx, ' ', tipo);
+}
+
+function tecladoLimpiar(idx, tipo) {
+    if (tipo === 'completar') {
+        const blanks = document.querySelectorAll(`[id^="blank-${idx}-"]`);
+        blanks.forEach(b => b.value = '');
+        if (blanks.length > 0) blanks[0].focus();
+    } else {
+        const input = $(`resp-${idx}`);
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
     }
 }
 
@@ -596,6 +866,8 @@ function initCanvas(idx) {
         lastX: 0,
         lastY: 0,
         hasDrawn: false,
+        strokes: [],        // Array de trazos completos
+        currentStroke: null, // Trazo en progreso
     };
 
     // Eventos de dibujo
@@ -621,6 +893,14 @@ function startDrawing(idx, e) {
     state.lastX = pos.x;
     state.lastY = pos.y;
 
+    // Iniciar nuevo trazo
+    state.currentStroke = {
+        points: [{ x: pos.x, y: pos.y }],
+        color: state.tool === 'eraser' ? 'borrador' : state.color,
+        tool: state.tool,
+        brushSize: state.brushSize,
+    };
+
     // Dibujar punto
     state.ctx.beginPath();
     state.ctx.arc(pos.x, pos.y, state.brushSize / 2, 0, Math.PI * 2);
@@ -633,6 +913,11 @@ function draw(idx, e) {
     if (!st.drawing) return;
 
     const pos = getCanvasPos(idx, e);
+
+    // Registrar punto en trazo actual
+    if (st.currentStroke) {
+        st.currentStroke.points.push({ x: pos.x, y: pos.y });
+    }
 
     st.ctx.beginPath();
     st.ctx.moveTo(st.lastX, st.lastY);
@@ -649,7 +934,13 @@ function draw(idx, e) {
 
 function stopDrawing(idx) {
     if (canvasStates[idx]) {
-        canvasStates[idx].drawing = false;
+        const st = canvasStates[idx];
+        st.drawing = false;
+        // Guardar trazo finalizado
+        if (st.currentStroke && st.currentStroke.points.length > 0) {
+            st.strokes.push(st.currentStroke);
+            st.currentStroke = null;
+        }
     }
 }
 
@@ -679,6 +970,197 @@ function clearCanvas(idx) {
     st.ctx.fillStyle = '#ffffff';
     st.ctx.fillRect(0, 0, st.canvas.width, st.canvas.height);
     st.hasDrawn = false;
+    st.strokes = [];
+    st.currentStroke = null;
+}
+
+// ═══ ANÁLISIS DE CANVAS PARA IA ═════════════════════
+
+function analizarCanvas(canvas, strokes) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    let analysis = '';
+    analysis += `Canvas: ${W}x${H} px\n`;
+
+    // ═══ PARTE 1: ANÁLISIS DE TRAZOS (más importante) ═══
+    // Filtrar trazos del borrador
+    const realStrokes = (strokes || []).filter(s => s.tool !== 'eraser' && s.points.length >= 2);
+    analysis += `Total de trazos dibujados: ${realStrokes.length}\n\n`;
+
+    if (realStrokes.length > 0) {
+        analysis += 'DETALLE DE CADA TRAZO (en orden cronológico):\n';
+        analysis += '─'.repeat(60) + '\n';
+
+        for (let i = 0; i < realStrokes.length; i++) {
+            const s = realStrokes[i];
+            const pts = s.points;
+            const first = pts[0];
+            const last = pts[pts.length - 1];
+
+            // Normalizar coordenadas a porcentaje del canvas
+            const x1 = (first.x / W * 100).toFixed(0);
+            const y1 = (first.y / H * 100).toFixed(0);
+            const x2 = (last.x / W * 100).toFixed(0);
+            const y2 = (last.y / H * 100).toFixed(0);
+
+            // Bounding box del trazo
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            for (const p of pts) {
+                if (p.x < minX) minX = p.x;
+                if (p.x > maxX) maxX = p.x;
+                if (p.y < minY) minY = p.y;
+                if (p.y > maxY) maxY = p.y;
+            }
+            const bboxW = ((maxX - minX) / W * 100).toFixed(0);
+            const bboxH = ((maxY - minY) / H * 100).toFixed(0);
+
+            // Longitud total del trazo
+            let length = 0;
+            for (let j = 1; j < pts.length; j++) {
+                const dx = pts[j].x - pts[j - 1].x;
+                const dy = pts[j].y - pts[j - 1].y;
+                length += Math.sqrt(dx * dx + dy * dy);
+            }
+
+            // Clasificar forma del trazo
+            const dx = last.x - first.x;
+            const dy = last.y - first.y;
+            const directDist = Math.sqrt(dx * dx + dy * dy);
+            const sinuosity = directDist > 5 ? (length / directDist) : (length > 10 ? 99 : 1);
+
+            let shape = '';
+            if (pts.length <= 3 || length < 8) {
+                shape = 'punto';
+            } else if (sinuosity < 1.3) {
+                // Línea recta - determinar dirección
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                if (Math.abs(angle) < 20 || Math.abs(angle) > 160) shape = 'línea horizontal';
+                else if (Math.abs(Math.abs(angle) - 90) < 20) shape = dy > 0 ? 'línea vertical (↓)' : 'línea vertical (↑)';
+                else if (angle > 20 && angle < 70) shape = 'línea diagonal (↘)';
+                else if (angle > -70 && angle < -20) shape = 'línea diagonal (↗)';
+                else if (angle > 110 && angle < 160) shape = 'línea diagonal (↙)';
+                else shape = 'línea diagonal (↖)';
+            } else if (sinuosity > 3) {
+                // Muy sinuoso - posible bucle o curva cerrada
+                const closeDist = Math.sqrt((last.x - first.x) ** 2 + (last.y - first.y) ** 2);
+                if (closeDist < length * 0.15) shape = 'forma cerrada/circular';
+                else shape = 'curva compleja/zigzag';
+            } else {
+                // Curva suave
+                // Determinar dirección de la curva
+                const mid = pts[Math.floor(pts.length / 2)];
+                const midOffsetX = mid.x - (first.x + last.x) / 2;
+                const midOffsetY = mid.y - (first.y + last.y) / 2;
+                if (Math.abs(midOffsetX) > Math.abs(midOffsetY)) {
+                    shape = midOffsetX > 0 ? 'curva hacia la derecha' : 'curva hacia la izquierda';
+                } else {
+                    shape = midOffsetY > 0 ? 'curva hacia abajo' : 'curva hacia arriba';
+                }
+            }
+
+            // Detectar ganchos (cambio brusco de dirección al final)
+            if (pts.length > 10) {
+                const lastQuarter = pts.slice(Math.floor(pts.length * 0.75));
+                if (lastQuarter.length > 3) {
+                    const endDx = lastQuarter[lastQuarter.length - 1].x - lastQuarter[0].x;
+                    const endDy = lastQuarter[lastQuarter.length - 1].y - lastQuarter[0].y;
+                    const mainDx = pts[Math.floor(pts.length * 0.75)].x - pts[0].x;
+                    const mainDy = pts[Math.floor(pts.length * 0.75)].y - pts[0].y;
+                    const mainAngle = Math.atan2(mainDy, mainDx);
+                    const endAngle = Math.atan2(endDy, endDx);
+                    const angleDiff = Math.abs(mainAngle - endAngle) * 180 / Math.PI;
+                    if (angleDiff > 60 && angleDiff < 300) {
+                        shape += ' + gancho al final';
+                    }
+                }
+            }
+
+            // Posición relativa en canvas
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            let posicion = '';
+            if (centerX < W * 0.33) posicion += 'izquierda';
+            else if (centerX > W * 0.66) posicion += 'derecha';
+            else posicion += 'centro';
+            if (centerY < H * 0.33) posicion += '-arriba';
+            else if (centerY > H * 0.66) posicion += '-abajo';
+            else posicion += '-medio';
+
+            const colorLabel = s.color === '#000000' ? 'negro' : s.color;
+            analysis += `Trazo ${i + 1}: ${shape}\n`;
+            analysis += `  Inicio: (${x1}%, ${y1}%) → Fin: (${x2}%, ${y2}%)\n`;
+            analysis += `  Zona: ${posicion} | Color: ${colorLabel} | Tamaño: ${bboxW}%x${bboxH}%\n`;
+            analysis += `  Longitud: ${length.toFixed(0)}px | Puntos: ${pts.length}\n`;
+
+            // Describir trayectoria simplificada (samplear puntos clave)
+            if (pts.length > 5) {
+                const keyPoints = [];
+                const step = Math.max(1, Math.floor(pts.length / 8));
+                for (let k = 0; k < pts.length; k += step) {
+                    keyPoints.push(`(${(pts[k].x / W * 100).toFixed(0)}%,${(pts[k].y / H * 100).toFixed(0)}%)`);
+                }
+                keyPoints.push(`(${(last.x / W * 100).toFixed(0)}%,${(last.y / H * 100).toFixed(0)}%)`);
+                analysis += `  Trayectoria: ${keyPoints.join(' → ')}\n`;
+            }
+            analysis += '\n';
+        }
+    }
+
+    // ═══ PARTE 2: MAPA VISUAL (alta resolución) ═══
+    const imageData = ctx.getImageData(0, 0, W, H);
+    const pixels = imageData.data;
+
+    const gridRows = 30;
+    const gridCols = 50;
+    const cellW = Math.floor(W / gridCols);
+    const cellH = Math.floor(H / gridRows);
+    let grid = [];
+    let totalPx = 0;
+    let drawnPx = 0;
+
+    for (let row = 0; row < gridRows; row++) {
+        let gridRow = [];
+        for (let col = 0; col < gridCols; col++) {
+            let drawn = 0;
+            let total = 0;
+            const yS = row * cellH;
+            const yE = Math.min((row + 1) * cellH, H);
+            const xS = col * cellW;
+            const xE = Math.min((col + 1) * cellW, W);
+
+            for (let y = yS; y < yE; y++) {
+                for (let x = xS; x < xE; x++) {
+                    const i = (y * W + x) * 4;
+                    total++;
+                    totalPx++;
+                    if (pixels[i] < 235 || pixels[i + 1] < 235 || pixels[i + 2] < 235) {
+                        drawn++;
+                        drawnPx++;
+                    }
+                }
+            }
+            const d = total > 0 ? drawn / total : 0;
+            if (d > 0.5) gridRow.push('█');
+            else if (d > 0.25) gridRow.push('▓');
+            else if (d > 0.08) gridRow.push('░');
+            else if (d > 0.015) gridRow.push('·');
+            else gridRow.push(' ');
+        }
+        grid.push(gridRow.join(''));
+    }
+
+    const cob = totalPx > 0 ? (drawnPx / totalPx * 100).toFixed(1) : '0';
+    analysis += `Cobertura total: ${cob}%\n\n`;
+    analysis += 'MAPA VISUAL (50x30 celdas, █=denso ▓=medio ░=ligero ·=mínimo):\n';
+    analysis += '┌' + '─'.repeat(gridCols) + '┐\n';
+    for (const row of grid) {
+        analysis += '│' + row + '│\n';
+    }
+    analysis += '└' + '─'.repeat(gridCols) + '┘\n';
+
+    return analysis;
 }
 
 // ═══ ORDENAR (DRAG & DROP) ══════════════════════════
@@ -755,7 +1237,7 @@ async function verificarRespuesta(idx) {
         respuesta = recogerCompletarRespuesta(idx);
         $(`resp-${idx}`).value = respuesta;
     } else if (tipo === 'dibujo') {
-        // Para dibujo, verificamos que haya dibujado algo Y descrito
+        // Para dibujo, capturamos la imagen del canvas
         const st = canvasStates[idx];
         if (!st || !st.hasDrawn) {
             toast('Dibuja tu respuesta primero', 'error');
@@ -763,12 +1245,7 @@ async function verificarRespuesta(idx) {
         }
         const descEl = $(`canvas-desc-${idx}`);
         const descripcion = descEl ? descEl.value.trim() : '';
-        if (!descripcion) {
-            toast('Describe brevemente lo que dibujaste para que la IA pueda evaluarlo', 'error');
-            if (descEl) descEl.focus();
-            return;
-        }
-        respuesta = descripcion;
+        respuesta = descripcion || '[dibujo enviado]';
     } else {
         respuesta = $(`resp-${idx}`).value.trim();
     }
@@ -785,8 +1262,17 @@ async function verificarRespuesta(idx) {
     feedbackEl.className = 'ejercicio-feedback';
 
     try {
-        // Para ejercicios de dibujo, enviar descripción a la IA para evaluación real
+        // Para ejercicios de dibujo, analizar el canvas y enviar análisis estructural
         if (tipo === 'dibujo') {
+            const canvas = $(`canvas-${idx}`);
+            
+            // Generar análisis visual detallado del canvas
+            feedbackEl.innerHTML = '<span class="spinner"></span> 🔍 Analizando tu dibujo...';
+            const strokeData = canvasStates[idx] ? canvasStates[idx].strokes : [];
+            const analisisDibujo = analizarCanvas(canvas, strokeData);
+            
+            feedbackEl.innerHTML = '<span class="spinner"></span> 🤖 La IA está evaluando tu dibujo...';
+
             const resultado = await api('/api/verificar', {
                 method: 'POST',
                 body: {
@@ -797,6 +1283,7 @@ async function verificarRespuesta(idx) {
                     ejercicio_enunciado: ejercicio ? ejercicio.enunciado : '',
                     ejercicio_opciones: [],
                     ejercicio_respuesta_correcta: ejercicio ? (ejercicio.respuesta_correcta || '') : '',
+                    analisis_dibujo: analisisDibujo,
                 },
             });
 
@@ -1324,4 +1811,5 @@ function goHome() {
     state.diaActual = null;
     state.contenidoDia = null;
     state.quizActual = null;
+    // Mantener user y token
 }

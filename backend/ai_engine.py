@@ -180,7 +180,8 @@ Responde con este JSON:
             "pista": "Recuerda que...",
             "tipo": "abierta",
             "opciones": [],
-            "respuesta_correcta": "42"
+            "respuesta_correcta": "42",
+            "teclado_especial": null
         }},
         {{
             "id": 3,
@@ -223,7 +224,14 @@ REGLAS CRÍTICAS:
 - La explicación debe ser EXTENSA, clara y completa como una clase real
 - Los ejemplos deben tener desarrollo paso a paso
 - Si hay debilidades, refuerza esas áreas
-- Las explicaciones deben ser apropiadas para nivel {nivel}"""
+- Las explicaciones deben ser apropiadas para nivel {nivel}
+
+REGLA IMPORTANTE - TECLADO ESPECIAL:
+Si un ejercicio de tipo "abierta" o "completar" requiere que el estudiante escriba en un alfabeto o sistema de escritura distinto al latino/español (por ejemplo: hiragana, katakana, kanji, griego, cirílico, árabe, hebreo, coreano, devanagari, símbolos musicales, braille, etc.), DEBES incluir el campo "teclado_especial" con un objeto que tenga:
+- "titulo": nombre del teclado (ej: "Hiragana", "Katakana", "Alfabeto Griego", "Cirílico")
+- "caracteres": array de arrays, donde cada sub-array es una fila del teclado virtual con los caracteres necesarios para responder ese ejercicio y otros útiles del mismo sistema.
+Ejemplo para hiragana: {{"titulo": "Hiragana", "caracteres": [["あ","い","う","え","お"],["か","き","く","け","こ"],["さ","し","す","せ","そ"],["た","ち","つ","て","と"],["な","に","ぬ","ね","の"],["は","ひ","ふ","へ","ほ"],["ま","み","む","め","も"],["や","ゆ","よ"],["ら","り","る","れ","ろ"],["わ","を","ん"]]}}
+Si el ejercicio NO necesita caracteres especiales, pon "teclado_especial": null"""
 
         raw = await self._chat(system, user)
         return self._parse_json(raw)
@@ -281,6 +289,84 @@ Sé motivador incluso si la respuesta es incorrecta."""
 
         raw = await self._chat(system, user)
         return self._parse_json(raw)
+
+    # ── Verificar Dibujo con Análisis de Canvas ────────
+    async def verificar_dibujo(
+        self, materia: str, tema: str, dia: int, ejercicio_index: int,
+        analisis_dibujo: str, descripcion_estudiante: str = "",
+        ejercicio_enunciado: str = "", ejercicio_respuesta_correcta: str = ""
+    ) -> dict:
+        """Analiza el dibujo del estudiante usando análisis estructural del canvas."""
+        system = """Eres un corrector educativo experto que analiza DIBUJOS de estudiantes.
+Recibes un ANÁLISIS DETALLADO del dibujo que incluye:
+
+1. DATOS DE TRAZOS INDIVIDUALES: Cada trazo con su forma (línea horizontal, vertical, diagonal, curva, gancho, forma cerrada/circular, etc.), posición (coordenadas en % del canvas), dirección, trayectoria punto a punto, y orden cronológico.
+
+2. MAPA VISUAL ASCII: Una representación visual de alta resolución (50x30) donde:
+   - █ = trazo denso
+   - ▓ = trazo medio  
+   - ░ = trazo ligero
+   - · = trazo mínimo
+   - (espacio) = vacío
+
+CÓMO ANALIZAR EL DIBUJO:
+- Los TRAZOS son la información más importante. Cada trazo tiene: forma clasificada, inicio→fin, trayectoria, zona del canvas.
+- El ORDEN de los trazos importa (especialmente para caracteres como letras, hiragana, kanji, etc.)
+- Las TRAYECTORIAS te dicen exactamente la forma de cada trazo: si es recta, curva, con gancho, etc.
+- La FORMA GENERAL del dibujo se ve en el mapa ASCII.
+- Las coordenadas están en % del canvas: (0%,0%)=esquina superior izquierda, (100%,100%)=esquina inferior derecha.
+
+EVALUACIÓN:
+- Compara los trazos individuales y la forma general con lo que se pedía
+- Si el ejercicio pide caracteres/letras/símbolos: evalúa si los trazos tienen la forma, dirección y orden correctos
+- Si el ejercicio pide dibujos/diagramas: evalúa si la forma general cumple con lo pedido
+- Sé GENEROSO con la evaluación - si la intención es clara y los trazos principales están, considera correcto
+- Para fórmulas matemáticas usa delimitadores KaTeX: $f(x)$ para inline, $$f(x)$$ para bloque
+- Sé motivador y reconoce el esfuerzo
+Responde SOLO con JSON válido."""
+
+        contexto = f"""Analiza el dibujo del estudiante basándote en el siguiente análisis visual:
+
+- Materia: {materia}
+- Tema: {tema}
+- Día: {dia}, Ejercicio: {ejercicio_index + 1}
+- Enunciado del ejercicio: "{ejercicio_enunciado}"
+- Lo que se esperaba: "{ejercicio_respuesta_correcta}"
+"""
+
+        if descripcion_estudiante and descripcion_estudiante != '[dibujo enviado]':
+            contexto += f'\n- El estudiante describe su dibujo como: "{descripcion_estudiante}"'
+
+        contexto += f"""
+
+═══ ANÁLISIS VISUAL DEL CANVAS ═══
+{analisis_dibujo}
+═══════════════════════════════════
+
+Basándote en el análisis visual anterior, evalúa si el dibujo cumple con lo pedido.
+Responde con este JSON:
+{{
+    "correcto": true/false,
+    "puntuacion": 0-100,
+    "feedback": "Descripción de lo que interpretas del dibujo y si cumple con lo pedido",
+    "respuesta_correcta": "Lo que se esperaba del dibujo",
+    "explicacion_paso_a_paso": "Análisis de los elementos del dibujo: qué hizo bien y qué podría mejorar",
+    "consejo": "Un consejo específico para mejorar"
+}}"""
+
+        try:
+            raw = await self._chat(system, contexto)
+            return self._parse_json(raw)
+        except Exception as e:
+            print(f"⚠️ Error al verificar dibujo: {e}")
+            return {
+                "correcto": False,
+                "puntuacion": 0,
+                "feedback": "No se pudo analizar el dibujo. Intenta de nuevo.",
+                "respuesta_correcta": ejercicio_respuesta_correcta,
+                "explicacion_paso_a_paso": "",
+                "consejo": "Intenta dibujar con trazos más claros y definidos."
+            }
 
     # ── Generar Quiz ─────────────────────────────────
     async def generar_quiz(

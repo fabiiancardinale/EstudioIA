@@ -13,10 +13,81 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
+    <!-- ═══ PANTALLA DE LOGIN / REGISTRO ═══ -->
+    <div id="screen-auth" class="screen active">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">📚</div>
+                    <h1 class="auth-title">EstudioIA</h1>
+                    <p class="auth-subtitle">Tu tutor inteligente con IA</p>
+                </div>
+
+                <!-- Tabs Login / Registro -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+                    <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Registrarse</button>
+                </div>
+
+                <!-- Form Login -->
+                <form id="form-login" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">📧 Email</label>
+                        <input type="email" id="login-email" placeholder="tucorreo@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">🔒 Contraseña</label>
+                        <input type="password" id="login-password" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-auth">
+                        🚀 Entrar
+                    </button>
+                    <p class="auth-error" id="login-error"></p>
+                </form>
+
+                <!-- Form Registro -->
+                <form id="form-register" class="auth-form" style="display:none;">
+                    <div class="form-group">
+                        <label for="reg-nombre">😊 Tu nombre</label>
+                        <input type="text" id="reg-nombre" placeholder="¿Cómo te llamas?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">📧 Email</label>
+                        <input type="email" id="reg-email" placeholder="tucorreo@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">🔒 Contraseña</label>
+                        <input type="password" id="reg-password" placeholder="Mínimo 4 caracteres" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password2">🔒 Confirmar contraseña</label>
+                        <input type="password" id="reg-password2" placeholder="Repite tu contraseña" required minlength="4">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-auth">
+                        ✨ Crear cuenta
+                    </button>
+                    <p class="auth-error" id="register-error"></p>
+                </form>
+            </div>
+            <div class="auth-decoration">
+                <span class="auth-deco-item">🧮</span>
+                <span class="auth-deco-item">🔬</span>
+                <span class="auth-deco-item">📐</span>
+                <span class="auth-deco-item">🌍</span>
+                <span class="auth-deco-item">📖</span>
+                <span class="auth-deco-item">🎨</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══ PANTALLA DE INICIO ═══ -->
-    <div id="screen-home" class="screen active">
+    <div id="screen-home" class="screen">
         <header class="hero">
             <div class="hero-bg"></div>
+            <div class="user-bar">
+                <span class="user-greeting" id="user-greeting">👋 ¡Hola!</span>
+                <button class="btn btn-ghost btn-logout" onclick="logout()">🚪 Salir</button>
+            </div>
             <div class="container">
                 <div class="hero-content">
                     <div class="logo">📚</div>

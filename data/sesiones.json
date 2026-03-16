@@ -406,8 +406,55 @@
       ]
     },
     "progreso": {
-      "dias_completados": [],
-      "respuestas": {},
+      "dias_completados": [
+        1
+      ],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 0,
+            "respuesta": "c) Los kanji representan ideas/conceptos, las letras representan sonidos",
+            "correcto": true,
+            "timestamp": 1773585338.4456913
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585402.4443557
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585415.5633576
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585415.7407694
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585416.4721222
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585417.1188629
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "2, superior, inferior, mas largo",
+            "correcto": true,
+            "timestamp": 1773585418.1337526
+          }
+        ]
+      },
       "quizzes": {},
       "debilidades": [],
       "fortalezas": []
@@ -420,7 +467,7 @@
       }
     ],
     "creado": 1773326456.062264,
-    "ultimo_acceso": 1773327781.2761033
+    "ultimo_acceso": 1773585418.141352
   },
   "98776f6e": {
     "id": "98776f6e",
@@ -1130,5 +1177,493 @@
     ],
     "creado": 1773497266.6396458,
     "ultimo_acceso": 1773519727.0297174
+  },
+  "091ca575": {
+    "id": "091ca575",
+    "user_id": "7f4b9041",
+    "materia": "japones",
+    "tema": "desde cero",
+    "semanas": 2,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de japonés desde cero",
+      "descripcion": "Plan intensivo de 14 días para principiantes absolutos, enfocado en hiragana, vocabulario básico, saludos y estructuras gramaticales simples",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción al japonés y hiragana (vocales y primeras consonantes)",
+          "objetivos": [
+            "Familiarizarse con los sonidos del japonés",
+            "Aprender las 5 vocales y consonantes K, S, T",
+            "Saludos básicos"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Introducción al sistema de escritura, pronunciación de vocales, primeras 15 letras de hiragana y saludos como 'konnichiwa'"
+        },
+        {
+          "dia": 2,
+          "titulo": "Hiragana completo (primera mitad) y práctica de escritura",
+          "objetivos": [
+            "Dominar las primeras 23 letras de hiragana",
+            "Practicar trazos correctos",
+            "Aprender números 1-10"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Práctica intensiva de escritura de hiragana, ejercicios de reconocimiento y aprendizaje de números básicos"
+        },
+        {
+          "dia": 3,
+          "titulo": "Hiragana completo y mini evaluación",
+          "objetivos": [
+            "Completar todas las letras de hiragana",
+            "Evaluar progreso con prueba corta",
+            "Introducir partícula 'wa'"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 40,
+          "resumen": "Aprendizaje de las letras restantes de hiragana, prueba de reconocimiento y primera estructura gramatical con 'watashi wa'"
+        },
+        {
+          "dia": 4,
+          "titulo": "Vocabulario básico y presentaciones personales",
+          "objetivos": [
+            "Aprender 20 palabras de uso común",
+            "Construir frases de presentación",
+            "Practicar diálogos simples"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Vocabulario de familia, profesiones y nacionalidades. Frases como 'Watashi wa [nombre] desu' y 'Yoroshiku onegaishimasu'"
+        },
+        {
+          "dia": 5,
+          "titulo": "Katakana introducción y repaso de hiragana",
+          "objetivos": [
+            "Introducir primeras letras de katakana",
+            "Repasar hiragana completo",
+            "Aprender palabras extranjeras en japonés"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Comparación hiragana/katakana, primeros 15 caracteres de katakana y palabras prestadas como 'テレビ' (terebi - TV)"
+        },
+        {
+          "dia": 6,
+          "titulo": "Actividades ligeras y repaso general",
+          "objetivos": [
+            "Consolidar lo aprendido en la semana",
+            "Práctica con videos o canciones",
+            "Repaso sin presión"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 30,
+          "resumen": "Día de consolidación con actividades multimedia, repaso de hiragana y vocabulario mediante juegos o videos"
+        },
+        {
+          "dia": 7,
+          "titulo": "Evaluación parcial y práctica conversacional",
+          "objetivos": [
+            "Evaluar progreso de la primera semana",
+            "Practicar diálogos de presentación",
+            "Corregir errores comunes"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 60,
+          "resumen": "Prueba de hiragana y vocabulario básico, seguida de práctica conversacional con corrección de pronunciación"
+        },
+        {
+          "dia": 8,
+          "titulo": "Gramática básica: partículas y estructura de oraciones",
+          "objetivos": [
+            "Aprender partículas 'wa', 'no', 'ka'",
+            "Entender orden SOV del japonés",
+            "Formar preguntas simples"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 50,
+          "resumen": "Estructura sujeto-objeto-verbo, uso de partículas gramaticales y formación de preguntas con 'ka'"
+        },
+        {
+          "dia": 9,
+          "titulo": "Verbos en presente y vocabulario de acciones",
+          "objetivos": [
+            "Aprender verbos básicos en forma -masu",
+            "Construir oraciones con verbos",
+            "Ampliar vocabulario de acciones"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Verbos como tabemasu (comer), nomimasu (beber), ikimasu (ir). Oraciones como 'Watashi wa pan o tabemasu'"
+        },
+        {
+          "dia": 10,
+          "titulo": "Katakana completo y práctica intensiva",
+          "objetivos": [
+            "Completar aprendizaje de katakana",
+            "Practicar lectura de palabras extranjeras",
+            "Mini evaluación de katakana"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 50,
+          "resumen": "Aprendizaje de katakana restante, práctica con marcas, productos y nombres extranjeros, prueba corta"
+        },
+        {
+          "dia": 11,
+          "titulo": "Adjetivos y descripciones básicas",
+          "objetivos": [
+            "Aprender adjetivos i y na",
+            "Describir objetos y personas",
+            "Ampliar vocabulario descriptivo"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Adjetivos como ookii (grande), chiisai (pequeño), kirei (bonito). Estructuras con 'kore wa [adjetivo] desu'"
+        },
+        {
+          "dia": 12,
+          "titulo": "Diálogos prácticos y situaciones cotidianas",
+          "objetivos": [
+            "Practicar conversaciones en restaurante/tienda",
+            "Usar expresiones de cortesía",
+            "Integrar todo lo aprendido"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 60,
+          "resumen": "Role-playing de situaciones como pedir comida, comprar algo y preguntar precios. Uso de 'kore wa ikura desu ka'"
+        },
+        {
+          "dia": 13,
+          "titulo": "Repaso general y preparación para evaluación final",
+          "objetivos": [
+            "Repasar todos los contenidos",
+            "Practicar puntos débiles",
+            "Preparar mentalmente para prueba final"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 40,
+          "resumen": "Repaso integral de hiragana, katakana, vocabulario, gramática básica y expresiones prácticas"
+        },
+        {
+          "dia": 14,
+          "titulo": "Evaluación final y plan de continuación",
+          "objetivos": [
+            "Evaluar dominio de contenidos básicos",
+            "Establecer rutina de estudio continua",
+            "Celebrar logros"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 70,
+          "resumen": "Prueba comprensiva de escritura, vocabulario y gramática. Creación de plan personalizado para continuar estudios"
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 7,
+          "descripcion": "Primera evaluación parcial: dominio de hiragana y vocabulario básico"
+        },
+        {
+          "dia": 10,
+          "descripcion": "Completado katakana y evaluación de lectura"
+        },
+        {
+          "dia": 14,
+          "descripcion": "Evaluación final integral y establecimiento de plan de estudios continuo"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [
+        1,
+        3
+      ],
+      "respuestas": {
+        "1": [
+          {
+            "ejercicio": 0,
+            "respuesta": "b) shi",
+            "correcto": true,
+            "timestamp": 1773586331.9395795
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "ki",
+            "correcto": false,
+            "timestamp": 1773586402.2274404
+          },
+          {
+            "ejercicio": 2,
+            "respuesta": "く",
+            "correcto": true,
+            "timestamp": 1773587880.9673111
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "hice una t con un cirulo  y una mini barriga abajo",
+            "correcto": false,
+            "timestamp": 1773588752.6201606
+          }
+        ],
+        "2": [
+          {
+            "ejercicio": 0,
+            "respuesta": "b) shi",
+            "correcto": true,
+            "timestamp": 1773586883.8724415
+          },
+          {
+            "ejercicio": 1,
+            "respuesta": "falso",
+            "correcto": true,
+            "timestamp": 1773587135.754132
+          }
+        ],
+        "3": [
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": false,
+            "timestamp": 1773589291.3623364
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": false,
+            "timestamp": 1773589986.3456013
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": false,
+            "timestamp": 1773590076.9979653
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": false,
+            "timestamp": 1773590190.3607726
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": true,
+            "timestamp": 1773590792.9996972
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": true,
+            "timestamp": 1773590837.7537668
+          },
+          {
+            "ejercicio": 4,
+            "respuesta": "[dibujo enviado]",
+            "correcto": false,
+            "timestamp": 1773591078.2970438
+          }
+        ]
+      },
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773585987.1427677,
+    "ultimo_acceso": 1773591078.308856
+  },
+  "8f2af55d": {
+    "id": "8f2af55d",
+    "user_id": "7f4b9041",
+    "materia": "finanzas",
+    "tema": "ganar dinero sin trabajar",
+    "semanas": 2,
+    "nivel": "principiante",
+    "plan": {
+      "titulo": "Plan de estudio de ganar dinero sin trabajar",
+      "descripcion": "Introducción a conceptos de ingresos pasivos, inversiones básicas y automatización de ingresos para principiantes en finanzas",
+      "total_dias": 14,
+      "dias": [
+        {
+          "dia": 1,
+          "titulo": "Introducción a los ingresos pasivos",
+          "objetivos": [
+            "Comprender qué son los ingresos pasivos",
+            "Diferenciar entre ingresos activos y pasivos"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Conceptos básicos de ingresos pasivos y ejemplos cotidianos"
+        },
+        {
+          "dia": 2,
+          "titulo": "Mitos y realidades del dinero sin trabajo",
+          "objetivos": [
+            "Identificar conceptos erróneos comunes",
+            "Establecer expectativas realistas"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Análisis de promesas engañosas y enfoques realistas"
+        },
+        {
+          "dia": 3,
+          "titulo": "Primeros pasos: ahorro y capital inicial",
+          "objetivos": [
+            "Aprender a crear un fondo inicial",
+            "Entender el concepto de capital semilla"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 50,
+          "resumen": "Ejercicios para calcular ahorros necesarios y planificación inicial"
+        },
+        {
+          "dia": 4,
+          "titulo": "Repaso de conceptos fundamentales",
+          "objetivos": [
+            "Consolidar conocimientos de días 1-3",
+            "Resolver dudas principales"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 40,
+          "resumen": "Sesión de preguntas y respuestas sobre conceptos básicos"
+        },
+        {
+          "dia": 5,
+          "titulo": "Mini evaluación inicial",
+          "objetivos": [
+            "Evaluar comprensión de conceptos básicos",
+            "Identificar áreas de mejora"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 35,
+          "resumen": "Prueba corta sobre ingresos pasivos y planificación inicial"
+        },
+        {
+          "dia": 6,
+          "titulo": "Inversiones básicas para principiantes",
+          "objetivos": [
+            "Conocer opciones de inversión de bajo riesgo",
+            "Entender fondos indexados y ETFs"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 50,
+          "resumen": "Introducción a instrumentos de inversión accesibles"
+        },
+        {
+          "dia": 7,
+          "titulo": "Actividad ligera: casos de estudio",
+          "objetivos": [
+            "Analizar ejemplos reales simplificados",
+            "Reflexionar sobre aplicaciones prácticas"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 30,
+          "resumen": "Revisión de casos hipotéticos de ingresos pasivos"
+        },
+        {
+          "dia": 8,
+          "titulo": "Creación de contenido digital pasivo",
+          "objetivos": [
+            "Entender ingresos por contenido en plataformas",
+            "Conocer opciones de monetización básica"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Introducción a ingresos por libros electrónicos, cursos y contenido digital"
+        },
+        {
+          "dia": 9,
+          "titulo": "Práctica: planificación de un proyecto digital",
+          "objetivos": [
+            "Diseñar un proyecto de contenido básico",
+            "Estimar tiempos y recursos necesarios"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 55,
+          "resumen": "Ejercicio de creación de un plan para contenido digital"
+        },
+        {
+          "dia": 10,
+          "titulo": "Repaso intermedio",
+          "objetivos": [
+            "Integrar conocimientos de inversiones y contenido digital",
+            "Preparar para evaluación parcial"
+          ],
+          "tipo": "repaso",
+          "duracion_minutos": 40,
+          "resumen": "Revisión completa de la primera mitad del curso"
+        },
+        {
+          "dia": 11,
+          "titulo": "Evaluación parcial",
+          "objetivos": [
+            "Medir progreso general",
+            "Validar comprensión de conceptos clave"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 50,
+          "resumen": "Examen que cubre todos los temas vistos hasta ahora"
+        },
+        {
+          "dia": 12,
+          "titulo": "Actividad ligera: herramientas y recursos",
+          "objetivos": [
+            "Explorar plataformas y herramientas gratuitas",
+            "Familiarizarse con recursos disponibles"
+          ],
+          "tipo": "practica",
+          "duracion_minutos": 35,
+          "resumen": "Navegación guiada por recursos en línea para ingresos pasivos"
+        },
+        {
+          "dia": 13,
+          "titulo": "Automatización y escalabilidad",
+          "objetivos": [
+            "Comprender principios de automatización",
+            "Entender conceptos de escalabilidad"
+          ],
+          "tipo": "teoria",
+          "duracion_minutos": 45,
+          "resumen": "Cómo hacer que los ingresos pasivos requieran menos mantenimiento"
+        },
+        {
+          "dia": 14,
+          "titulo": "Evaluación final y plan de acción",
+          "objetivos": [
+            "Evaluar conocimientos completos",
+            "Crear un plan personalizado de primeros pasos"
+          ],
+          "tipo": "prueba",
+          "duracion_minutos": 60,
+          "resumen": "Prueba final y desarrollo de un plan personalizado de implementación"
+        }
+      ],
+      "hitos": [
+        {
+          "dia": 7,
+          "descripcion": "Primera evaluación parcial"
+        },
+        {
+          "dia": 11,
+          "descripcion": "Evaluación intermedia y repaso completo"
+        },
+        {
+          "dia": 14,
+          "descripcion": "Evaluación final y creación de plan de acción personalizado"
+        }
+      ]
+    },
+    "progreso": {
+      "dias_completados": [],
+      "respuestas": {},
+      "quizzes": {},
+      "debilidades": [],
+      "fortalezas": []
+    },
+    "chat_historial": [],
+    "creado": 1773586618.5424588,
+    "ultimo_acceso": 1773586996.1923013
   }
 }

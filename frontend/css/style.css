@@ -107,6 +107,203 @@ body::after {
 .screen { display: none; }
 .screen.active { display: block; }
 
+/* ═══ AUTH SCREEN ════════════════════════════════════ */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    position: relative;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(124,92,252,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(244,114,182,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(34,211,238,0.06) 0%, transparent 50%);
+}
+
+.auth-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px 36px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 1;
+    animation: authSlideUp 0.6s ease-out;
+}
+
+@keyframes authSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-logo {
+    font-size: 56px;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(124,92,252,0.25));
+    margin-bottom: 8px;
+}
+
+.auth-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent-pink) 50%, var(--accent-orange) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+}
+
+.auth-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.auth-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3);
+}
+
+.auth-tab:hover:not(.active) {
+    color: var(--primary);
+}
+
+.auth-form .form-group {
+    margin-bottom: 18px;
+}
+
+.auth-form label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 1rem;
+    background: var(--bg-input);
+    color: var(--text);
+    transition: var(--transition);
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background: var(--bg-card);
+}
+
+.btn-auth {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 1.05rem;
+    padding: 14px;
+}
+
+.auth-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 20px;
+}
+
+.auth-decoration {
+    display: flex;
+    gap: 20px;
+    margin-top: 32px;
+    z-index: 1;
+}
+
+.auth-deco-item {
+    font-size: 32px;
+    animation: floatDeco 3s ease-in-out infinite;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
+}
+
+.auth-deco-item:nth-child(2) { animation-delay: 0.5s; }
+.auth-deco-item:nth-child(3) { animation-delay: 1s; }
+.auth-deco-item:nth-child(4) { animation-delay: 1.5s; }
+.auth-deco-item:nth-child(5) { animation-delay: 2s; }
+.auth-deco-item:nth-child(6) { animation-delay: 2.5s; }
+
+@keyframes floatDeco {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ═══ USER BAR ═══════════════════════════════════════ */
+.user-bar {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+.user-greeting {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--primary-dark);
+    background: var(--primary-bg);
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.btn-logout {
+    font-size: 0.85rem !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    color: var(--text-muted) !important;
+}
+
+.btn-logout:hover {
+    background: var(--danger-bg) !important;
+    color: var(--danger) !important;
+}
+
 /* ═══ HERO ═══════════════════════════════════════════ */
 .hero {
     position: relative;
@@ -964,6 +1161,155 @@ body::after {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* ═══ TECLADO VIRTUAL ESPECIAL ═══════════════════════ */
+.teclado-especial-container {
+    margin-top: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-card);
+    box-shadow: 0 2px 12px rgba(124, 92, 252, 0.06);
+}
+
+.teclado-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, var(--primary-bg), rgba(244,114,182,0.06));
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--primary-dark);
+    user-select: none;
+    transition: var(--transition);
+}
+
+.teclado-header:hover {
+    background: linear-gradient(135deg, rgba(124,92,252,0.12), rgba(244,114,182,0.10));
+}
+
+.teclado-toggle {
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.teclado-body.visible + .teclado-header .teclado-toggle,
+.teclado-body.visible ~ .teclado-header .teclado-toggle {
+    transform: rotate(180deg);
+}
+
+.teclado-body {
+    display: none;
+    padding: 14px;
+    background: var(--bg-input);
+    border-top: 1px solid var(--border);
+    animation: tecladoSlide 0.3s ease;
+}
+
+.teclado-body.visible {
+    display: block;
+}
+
+@keyframes tecladoSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.teclado-filas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.teclado-fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+
+.tecla-especial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 4px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1.15rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 1px 0 rgba(0,0,0,0.06);
+    user-select: none;
+}
+
+.tecla-especial:hover {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(124, 92, 252, 0.15);
+}
+
+.tecla-especial:active {
+    transform: translateY(1px);
+    box-shadow: none;
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.teclado-acciones {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-teclado-accion {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-teclado-accion:hover {
+    border-color: var(--primary-light);
+    color: var(--primary);
+    background: var(--primary-bg);
+}
+
+.btn-teclado-limpiar:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-bg);
+}
+
+/* Responsive: teclas más pequeñas en móvil */
+@media (max-width: 600px) {
+    .tecla-especial {
+        min-width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        padding: 2px 6px;
+    }
+    .teclado-body { padding: 10px; }
+    .teclado-fila { gap: 4px; }
 }
 
 .ejercicio-opciones {

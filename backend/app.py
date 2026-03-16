@@ -3,7 +3,7 @@
 Backend principal con FastAPI + DeepSeek
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,7 +38,31 @@ ai = AIEngine()
 db = Storage(DATA_DIR)
 
 
+# ── Helper: obtener usuario autenticado ──────────────
+def get_current_user(request: Request) -> dict:
+    """Extrae el token del header Authorization y devuelve el usuario."""
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token no proporcionado")
+    token = auth_header[7:]
+    user = db.obtener_usuario_por_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Token inválido o expirado")
+    return user
+
+
 # ── Modelos ──────────────────────────────────────────
+class RegisterRequest(BaseModel):
+    nombre: str
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
 class PlanRequest(BaseModel):
     materia: str
     tema: str
@@ -54,6 +78,7 @@ class AnswerRequest(BaseModel):
     ejercicio_enunciado: Optional[str] = ""
     ejercicio_opciones: Optional[list[str]] = []
     ejercicio_respuesta_correcta: Optional[str] = ""
+    analisis_dibujo: Optional[str] = None
 
 
 class ChatRequest(BaseModel):
@@ -78,9 +103,40 @@ async def root():
     return FileResponse(FRONTEND_DIR / "index.html")
 
 
+# ── API: Registro de usuario ─────────────────────────
+@app.post("/api/register")
+async def register(req: RegisterRequest):
+    if not req.nombre.strip() or not req.email.strip() or not req.password.strip():
+        raise HTTPException(status_code=400, detail="Todos los campos son obligatorios")
+    if len(req.password) < 4:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 4 caracteres")
+
+    result = db.registrar_usuario(req.nombre.strip(), req.email.strip(), req.password)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
+
+
+# ── API: Login de usuario ────────────────────────────
+@app.post("/api/login")
+async def login(req: LoginRequest):
+    result = db.autenticar_usuario(req.email.strip(), req.password)
+    if "error" in result:
+        raise HTTPException(status_code=401, detail=result["error"])
+    return result
+
+
+# ── API: Verificar token ────────────────────────────
+@app.get("/api/me")
+async def me(request: Request):
+    user = get_current_user(request)
+    return user
+
+
 # ── API: Generar Plan de Estudio ─────────────────────
 @app.post("/api/plan")
-async def generar_plan(req: PlanRequest):
+async def generar_plan(req: PlanRequest, request: Request):
+    user = get_current_user(request)
     try:
         plan = await ai.generar_plan(
             materia=req.materia,
@@ -95,6 +151,7 @@ async def generar_plan(req: PlanRequest):
             semanas=req.tiempo_semanas,
             nivel=req.nivel,
             plan=plan,
+            user_id=user.get("id", ""),
         )
 
         return {"session_id": session_id, "plan": plan}
@@ -131,17 +188,30 @@ async def verificar_respuesta(req: AnswerRequest):
         raise HTTPException(status_code=404, detail="Sesión no encontrada")
 
     try:
-        resultado = await ai.verificar_respuesta(
-            materia=sesion["materia"],
-            tema=sesion["tema"],
-            dia=req.dia,
-            ejercicio_index=req.ejercicio_index,
-            respuesta=req.respuesta,
-            plan=sesion["plan"],
-            ejercicio_enunciado=req.ejercicio_enunciado,
-            ejercicio_opciones=req.ejercicio_opciones,
-            ejercicio_respuesta_correcta=req.ejercicio_respuesta_correcta,
-        )
+        # Si hay análisis de dibujo (ejercicio de dibujo), usar verificación de dibujo
+        if req.analisis_dibujo:
+            resultado = await ai.verificar_dibujo(
+                materia=sesion["materia"],
+                tema=sesion["tema"],
+                dia=req.dia,
+                ejercicio_index=req.ejercicio_index,
+                analisis_dibujo=req.analisis_dibujo,
+                descripcion_estudiante=req.respuesta,
+                ejercicio_enunciado=req.ejercicio_enunciado,
+                ejercicio_respuesta_correcta=req.ejercicio_respuesta_correcta,
+            )
+        else:
+            resultado = await ai.verificar_respuesta(
+                materia=sesion["materia"],
+                tema=sesion["tema"],
+                dia=req.dia,
+                ejercicio_index=req.ejercicio_index,
+                respuesta=req.respuesta,
+                plan=sesion["plan"],
+                ejercicio_enunciado=req.ejercicio_enunciado,
+                ejercicio_opciones=req.ejercicio_opciones,
+                ejercicio_respuesta_correcta=req.ejercicio_respuesta_correcta,
+            )
 
         db.registrar_respuesta(
             session_id=req.session_id,
@@ -257,8 +327,9 @@ async def obtener_recomendaciones(session_id: str):
 
 # ── API: Listar sesiones ────────────────────────────
 @app.get("/api/sesiones")
-async def listar_sesiones():
-    return db.listar_sesiones()
+async def listar_sesiones(request: Request):
+    user = get_current_user(request)
+    return db.listar_sesiones(user_id=user.get("id", ""))
 
 
 if __name__ == "__main__":

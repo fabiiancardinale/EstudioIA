@@ -1,9 +1,10 @@
 """
-💾 Sistema de Almacenamiento - Gestión de sesiones y progreso
+💾 Sistema de Almacenamiento - Gestión de usuarios, sesiones y progreso
 Usa archivos JSON para persistencia simple
 """
 
 import json
+import hashlib
 import os
 import time
 import uuid
@@ -15,11 +16,14 @@ class Storage:
         self.data_dir = data_dir
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.sesiones_file = self.data_dir / "sesiones.json"
+        self.usuarios_file = self.data_dir / "usuarios.json"
         self._init_db()
 
     def _init_db(self):
         if not self.sesiones_file.exists():
             self._save({})
+        if not self.usuarios_file.exists():
+            self._save_usuarios({})
 
     def _load(self) -> dict:
         try:
@@ -32,13 +36,74 @@ class Storage:
         with open(self.sesiones_file, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
+    def _load_usuarios(self) -> dict:
+        try:
+            with open(self.usuarios_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+
+    def _save_usuarios(self, data: dict):
+        with open(self.usuarios_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+    @staticmethod
+    def _hash_password(password: str) -> str:
+        return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+    # ── Registrar Usuario ────────────────────────────
+    def registrar_usuario(self, nombre: str, email: str, password: str) -> dict:
+        usuarios = self._load_usuarios()
+        # Verificar si el email ya existe
+        for uid, u in usuarios.items():
+            if u["email"].lower() == email.lower():
+                return {"error": "Ya existe una cuenta con ese email"}
+
+        user_id = str(uuid.uuid4())[:8]
+        token = str(uuid.uuid4())
+
+        usuarios[user_id] = {
+            "id": user_id,
+            "nombre": nombre,
+            "email": email.lower(),
+            "password_hash": self._hash_password(password),
+            "token": token,
+            "creado": time.time(),
+        }
+        self._save_usuarios(usuarios)
+        return {"id": user_id, "nombre": nombre, "email": email.lower(), "token": token}
+
+    # ── Autenticar Usuario ───────────────────────────
+    def autenticar_usuario(self, email: str, password: str) -> dict:
+        usuarios = self._load_usuarios()
+        pw_hash = self._hash_password(password)
+
+        for uid, u in usuarios.items():
+            if u["email"].lower() == email.lower() and u["password_hash"] == pw_hash:
+                # Generar nuevo token en cada login
+                token = str(uuid.uuid4())
+                usuarios[uid]["token"] = token
+                self._save_usuarios(usuarios)
+                return {"id": uid, "nombre": u["nombre"], "email": u["email"], "token": token}
+
+        return {"error": "Email o contraseña incorrectos"}
+
+    # ── Obtener usuario por token ────────────────────
+    def obtener_usuario_por_token(self, token: str) -> dict | None:
+        usuarios = self._load_usuarios()
+        for uid, u in usuarios.items():
+            if u.get("token") == token:
+                return {"id": uid, "nombre": u["nombre"], "email": u["email"]}
+        return None
+
     # ── Crear Sesión ─────────────────────────────────
-    def crear_sesion(self, materia: str, tema: str, semanas: int, nivel: str, plan: dict) -> str:
+    def crear_sesion(self, materia: str, tema: str, semanas: int, nivel: str, plan: dict, user_id: str = "") -> str:
         session_id = str(uuid.uuid4())[:8]
         data = self._load()
 
         data[session_id] = {
             "id": session_id,
+            "user_id": user_id,
             "materia": materia,
             "tema": tema,
             "semanas": semanas,
@@ -204,10 +269,13 @@ class Storage:
         }
 
     # ── Listar Sesiones ──────────────────────────────
-    def listar_sesiones(self) -> list:
+    def listar_sesiones(self, user_id: str = "") -> list:
         data = self._load()
         sesiones = []
         for sid, sesion in data.items():
+            # Filtrar por user_id si se proporciona
+            if user_id and sesion.get("user_id", "") != user_id:
+                continue
             plan = sesion.get("plan", {})
             titulo = plan.get("titulo", f"{sesion['materia']} - {sesion['tema']}") if isinstance(plan, dict) else f"{sesion['materia']} - {sesion['tema']}"
             sesiones.append({

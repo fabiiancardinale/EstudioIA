@@ -7,6 +7,7 @@
 let state = {
     sessionId: null,
     plan: null,
+    materia: null,
     diaActual: null,
     contenidoDia: null,
     quizActual: null,
@@ -80,6 +81,363 @@ function simpleMarkdown(text) {
         .replace(/\n/g, '<br>')
         .replace(/^/, '<p>')
         .replace(/$/, '</p>');
+}
+
+/**
+ * 🔊 Sistema de Text-to-Speech (TTS) - Audio del tutor
+ * Usa la Web Speech API del navegador (gratis, sin tokens)
+ */
+window.tts = {
+    speaking: false,
+    utterance: null,
+    rate: 0.92,
+    pitch: 1.0,
+    currentBtn: null,
+    _resumeTimer: null,
+
+    /** Obtiene la mejor voz disponible */
+    _getVoice(langHint) {
+        const voices = speechSynthesis.getVoices();
+        if (!voices.length) return null;
+
+        // Si hay hint de idioma específico
+        if (langHint) {
+            return voices.find(v => v.lang.startsWith(langHint) && !v.localService) ||
+                   voices.find(v => v.lang.startsWith(langHint)) || null;
+        }
+
+        // Detectar idioma por materia
+        const materia = (state.plan?.titulo || state.plan?.materia || '').toLowerCase();
+        const langMap = {
+            'inglés': 'en', 'english': 'en',
+            'francés': 'fr', 'french': 'fr', 'français': 'fr',
+            'portugués': 'pt', 'portuguese': 'pt',
+            'alemán': 'de', 'german': 'de', 'deutsch': 'de',
+            'italiano': 'it', 'italian': 'it',
+            'japonés': 'ja', 'japanese': 'ja',
+            'chino': 'zh', 'chinese': 'zh', 'mandarín': 'zh',
+        };
+
+        for (const [key, lang] of Object.entries(langMap)) {
+            if (materia.includes(key)) {
+                return voices.find(v => v.lang.startsWith(lang) && !v.localService) ||
+                       voices.find(v => v.lang.startsWith(lang)) || null;
+            }
+        }
+
+        // Español por defecto
+        return voices.find(v => v.lang.startsWith('es') && !v.localService) ||
+               voices.find(v => v.lang.startsWith('es')) ||
+               voices[0];
+    },
+
+    /** Limpia texto para lectura natural */
+    cleanText(text) {
+        if (!text) return '';
+        return text
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/\$\$[\s\S]*?\$\$/g, ' fórmula ')
+            .replace(/\$[^$]+\$/g, ' fórmula ')
+            .replace(/\\[a-zA-Z]+\{[^}]*\}/g, ' ')
+            .replace(/[*_`#~|]/g, '')
+            .replace(/\bhttps?:\/\/\S+/g, ' enlace ')
+            .replace(/\n+/g, '. ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    },
+
+    /** Habla un texto */
+    speak(text, lang) {
+        if (!('speechSynthesis' in window)) {
+            toast('Tu navegador no soporta audio de voz', 'error');
+            return;
+        }
+
+        // Detener cualquier lectura previa
+        this.stop();
+
+        const clean = this.cleanText(text);
+        if (!clean) {
+            toast('No hay texto para leer', 'info');
+            return;
+        }
+
+        // Forzar carga de voces si aún no hay
+        const voices = speechSynthesis.getVoices();
+        if (!voices.length) {
+            // Intentar forzar carga y reintentar
+            speechSynthesis.cancel();
+            setTimeout(() => this._doSpeak(clean, lang), 200);
+            return;
+        }
+
+        this._doSpeak(clean, lang);
+    },
+
+    _doSpeak(cleanText, lang) {
+        // Partir textos largos en chunks (Chrome/Edge corta después de ~200 chars)
+        const chunks = this._splitText(cleanText, 180);
+        this.speaking = true;
+        if (this.currentBtn) this.currentBtn.classList.add('active');
+        this._speakChunks(chunks, lang, 0);
+    },
+
+    _splitText(text, maxLen) {
+        if (text.length <= maxLen) return [text];
+        const chunks = [];
+        let remaining = text;
+        while (remaining.length > 0) {
+            if (remaining.length <= maxLen) {
+                chunks.push(remaining);
+                break;
+            }
+            // Cortar en punto, coma o espacio
+            let cut = remaining.lastIndexOf('. ', maxLen);
+            if (cut < 50) cut = remaining.lastIndexOf(', ', maxLen);
+            if (cut < 50) cut = remaining.lastIndexOf(' ', maxLen);
+            if (cut < 50) cut = maxLen;
+            chunks.push(remaining.substring(0, cut + 1));
+            remaining = remaining.substring(cut + 1).trim();
+        }
+        return chunks;
+    },
+
+    _speakChunks(chunks, lang, index) {
+        if (index >= chunks.length) {
+            this._finish();
+            return;
+        }
+        // Si se pidió detener (solo aplica a partir del 2do chunk)
+        if (index > 0 && !this.speaking) {
+            this._finish();
+            return;
+        }
+
+        const u = new SpeechSynthesisUtterance(chunks[index]);
+        u.rate = this.rate;
+        u.pitch = this.pitch;
+
+        const voice = this._getVoice(lang);
+        if (voice) u.voice = voice;
+
+        u.onend = () => {
+            if (index + 1 < chunks.length && this.speaking) {
+                setTimeout(() => this._speakChunks(chunks, lang, index + 1), 80);
+            } else {
+                this._finish();
+            }
+        };
+        u.onerror = (e) => {
+            console.warn('TTS error:', e.error);
+            this._finish();
+        };
+
+        speechSynthesis.speak(u);
+        this.utterance = u;
+
+        // Workaround Chrome/Edge: mantener vivo con pause/resume cada 10s
+        this._startKeepAlive();
+    },
+
+    _startKeepAlive() {
+        clearInterval(this._resumeTimer);
+        this._resumeTimer = setInterval(() => {
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                speechSynthesis.pause();
+                speechSynthesis.resume();
+            }
+        }, 10000);
+    },
+
+    _finish() {
+        clearInterval(this._resumeTimer);
+        this.speaking = false;
+        this.utterance = null;
+        document.querySelectorAll('.btn-tts.active').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.audio-word.speaking').forEach(b => b.classList.remove('speaking'));
+        this.currentBtn = null;
+    },
+
+    /** Detiene la lectura */
+    stop() {
+        clearInterval(this._resumeTimer);
+        speechSynthesis.cancel();
+        this.speaking = false;
+        this.utterance = null;
+        document.querySelectorAll('.btn-tts.active').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.audio-word.speaking').forEach(b => b.classList.remove('speaking'));
+        this.currentBtn = null;
+    },
+
+    /** Habla el contenido de un elemento por ID */
+    speakElement(elementId, btnEl) {
+        if (this.speaking) { this.stop(); return; }
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        this.currentBtn = btnEl;
+        this.speak(el.innerText || el.textContent);
+    },
+
+    /** Habla un texto directamente */
+    speakText(text, btnEl) {
+        if (this.speaking) { this.stop(); return; }
+        this.currentBtn = btnEl;
+        // Resaltar la palabra que se está pronunciando
+        const wordEl = btnEl?.closest('.audio-word');
+        if (wordEl) wordEl.classList.add('speaking');
+        this.speak(text);
+    }
+};
+// Pre-cargar voces al cargar la página
+if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+/**
+ * Detecta si la sesión actual es de aprender un idioma extranjero.
+ * Solo en ese caso se muestran los botones de audio (TTS).
+ */
+function esIdiomaExtranjero() {
+    const titulo = (state.plan?.titulo || '').toLowerCase();
+    const materia = (state.materia || state.plan?.materia || '').toLowerCase();
+    const texto = `${titulo} ${materia}`;
+    const idiomas = [
+        'inglés', 'english', 'francés', 'french', 'français',
+        'portugués', 'portuguese', 'alemán', 'german', 'deutsch',
+        'italiano', 'italian', 'japonés', 'japanese', 'chino',
+        'chinese', 'mandarín', 'coreano', 'korean', 'ruso', 'russian',
+        'árabe', 'arabic', 'hindi', 'hebreo', 'hebrew', 'latín', 'latin',
+        'griego', 'greek', 'idioma', 'lengua', 'language',
+    ];
+    return idiomas.some(k => texto.includes(k));
+}
+
+/**
+ * 🔊 Detecta texto en idioma extranjero dentro del HTML y agrega botones de audio inline.
+ * Detecta: caracteres CJK, pinyin con tonos, kana japonés, hangul, cirílico, árabe.
+ * NO modifica texto dentro de etiquetas HTML.
+ */
+function addInlineAudio(html) {
+    if (!html) return html;
+
+    // Separar HTML en etiquetas y texto plano
+    return html.replace(/(<[^>]+>)|([^<]+)/g, (match, tag, text) => {
+        if (tag) return tag; // No tocar etiquetas HTML
+        return _processTextForAudio(text);
+    });
+}
+
+function _processTextForAudio(text) {
+    // ── Rangos de caracteres extranjeros (NO latinos) ──
+    const cjk = '\\u4E00-\\u9FFF\\u3400-\\u4DBF';
+    const kana = '\\u3040-\\u30FF';
+    const hangul = '\\uAC00-\\uD7AF\\u1100-\\u11FF';
+    const cyrillic = '\\u0400-\\u04FF';
+    const arabic = '\\u0600-\\u06FF';
+    const devanagari = '\\u0900-\\u097F';
+    const hebrew = '\\u0590-\\u05FF';
+    const foreignChars = `${cjk}${kana}${hangul}${cyrillic}${arabic}${devanagari}${hebrew}`;
+
+    // ── Pinyin: solo tonos que NO existen en español ──
+    // Español usa: á é í ó ú ñ ü (acento agudo) → NO los usamos como marcador
+    // Pinyin usa además: macron (ā ē ī ō ū), caron (ǎ ě ǐ ǒ ǔ), grave (à è ì ò ù), y ǖǘǚǜ
+    const pinyinOnlyTones = 'āǎàēěèīǐìōǒòūǔùǖǘǚǜĀǍÀĒĚÈĪǏÌŌǑÒŪǓÙǕǗǙǛ';
+    const allTones = pinyinOnlyTones + 'áéíóúÁÉÍÓÚ';
+    // Una palabra pinyin DEBE tener al menos un tono exclusivo (no español)
+    const pinyinWord = `[a-zA-ZüÜ${allTones}]*[${pinyinOnlyTones}][a-zA-ZüÜ${allTones}]*`;
+
+    // ── Palabras en idiomas con escritura latina (inglés, francés, etc.) ──
+    // Detecta texto entre comillas simples que parece extranjero: 'hello', 'bonjour'
+    // Solo si estamos en un curso de idioma (ya filtrado por esIdiomaExtranjero)
+    const quotedForeign = `'([^']{1,40})'`;
+
+    const pattern = new RegExp(
+        // 1) CJK + (pinyin/texto entre parens): 声母 (shēngmǔ)
+        `([${cjk}]+\\s*[\\(（][^\\)）]+[\\)）])` +
+        // 2) pinyin(tono exclusivo) + (CJK): mā (妈)
+        `|((?:${pinyinWord}\\s*)+[\\(（][${cjk}]+[\\)）])` +
+        // 3) Secuencia de caracteres extranjeros (CJK, kana, hangul, etc.)
+        `|([${foreignChars}]+)` +
+        // 4) Pinyin suelto con tono exclusivo (no español): shēngmǔ, bā, mǎ
+        `|(${pinyinWord})` +
+        // 5) Texto entre comillas simples (posible palabra extranjera)
+        `|${quotedForeign}`,
+        'g'
+    );
+
+    return text.replace(pattern, (m, g1, g2, g3, g4, g5) => {
+        if (!m.trim()) return m;
+
+        // Para texto entre comillas simples, verificar que no sea español común
+        if (g5 !== undefined) {
+            const inner = g5;
+            if (_looksSpanish(inner)) return m;
+            const escaped = inner.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            return `'<span class="audio-word" onclick="event.stopPropagation(); tts.speakText('${escaped}', this)">${inner}<i class="audio-btn" title="Escuchar pronunciación">🔊</i></span>'`;
+        }
+
+        // Determinar qué parte pronunciar:
+        const spoken = _extractSpoken(m, g1, g2);
+        const spokenEsc = spoken.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return `<span class="audio-word" onclick="event.stopPropagation(); tts.speakText('${spokenEsc}', this)">${m}<i class="audio-btn" title="Escuchar pronunciación">🔊</i></span>`;
+    });
+}
+
+/**
+ * Extrae la parte que se debe pronunciar de un match.
+ * Siempre lee los caracteres extranjeros (kanji/CJK), no la romanización.
+ * - 阿 (ā) → lee "阿"
+ * - 声母 (shēngmǔ) → lee "声母"
+ * - mā (妈) → lee "妈"
+ * - CJK solo → lee el CJK
+ * - Pinyin solo → lee el pinyin
+ */
+function _extractSpoken(match, gCJKparens, gPinyinParens) {
+    if (gCJKparens) {
+        // Caso: 阿 (ā) o 声母 (shēngmǔ) → pronunciar el kanji (fuera de paréntesis)
+        return match.replace(/\s*[\(（][^）\)]*[\)）]/g, '').trim();
+    }
+    if (gPinyinParens) {
+        // Caso: mā (妈) → pronunciar el kanji (dentro de paréntesis)
+        const parensContent = match.match(/[\(（]([^）\)]+)[\)）]/);
+        if (parensContent) return parensContent[1].trim();
+    }
+    // CJK solo o pinyin solo → pronunciar todo
+    return match.trim();
+}
+
+/** Verifica si una palabra/frase parece ser español */
+function _looksSpanish(text) {
+    const lower = text.toLowerCase().trim();
+    // Palabras/frases comunes en español que NO deben tener audio
+    const spanishWords = [
+        // Artículos y pronombres
+        'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas',
+        'yo', 'tú', 'él', 'ella', 'nosotros', 'ellos', 'ellas',
+        'este', 'esta', 'estos', 'estas', 'ese', 'esa', 'eso',
+        'mi', 'tu', 'su', 'mis', 'tus', 'sus', 'nuestro', 'nuestra',
+        // Preposiciones y conjunciones
+        'de', 'en', 'con', 'por', 'para', 'sin', 'sobre', 'entre',
+        'y', 'o', 'pero', 'como', 'que', 'si', 'no', 'sí',
+        // Verbos comunes
+        'es', 'son', 'ser', 'estar', 'tener', 'hacer', 'decir',
+        'ver', 'dar', 'ir', 'poder', 'saber', 'querer', 'poner',
+        // Palabras de lecciones
+        'ejemplo', 'nota', 'importante', 'recuerda', 'practica',
+        'más', 'muy', 'bien', 'mal', 'también', 'aquí', 'ahí',
+        'ocho', 'padre', 'madre', 'mamá', 'papá', 'grande',
+        'camino', 'caballo', 'cuál', 'tener miedo', 'regañar',
+        'cáñamo', 'fórmula', 'sílaba', 'vocal', 'consonante',
+        'tono', 'ascendente', 'descendente', 'plano', 'sonido',
+    ];
+    // Si es exactamente una palabra española conocida
+    if (spanishWords.includes(lower)) return true;
+    // Si contiene ñ, es casi seguro español
+    if (lower.includes('ñ')) return true;
+    // Si tiene más de 6 caracteres y solo tiene vocales españolas (á é í ó ú), probablemente español
+    if (lower.length > 6 && /^[a-záéíóúüñ\s]+$/.test(lower)) return true;
+    return false;
 }
 
 /**
@@ -291,6 +649,7 @@ function logout() {
     state.user = null;
     state.sessionId = null;
     state.plan = null;
+    state.materia = null;
     localStorage.removeItem('estudioia_token');
     localStorage.removeItem('estudioia_user');
     showScreen('screen-auth');
@@ -365,6 +724,7 @@ async function crearPlan(e) {
 
         state.sessionId = data.session_id;
         state.plan = data.plan;
+        state.materia = materia;
         mostrarPlan(data.plan);
         toast('¡Plan creado exitosamente! 🎉', 'success');
     } catch (err) {
@@ -381,34 +741,15 @@ async function crearPlan(e) {
 async function cargarSesion(sessionId) {
     showLoading('Cargando tu plan de estudio...');
     try {
-        // Obtener datos de la sesión a través del progreso
-        const progreso = await api(`/api/progreso/${sessionId}`);
-        // Necesitamos obtener el plan desde el backend
-        // Usamos el endpoint de día para recuperar info
+        // Obtener la sesión completa con el plan guardado
+        const sesion = await api(`/api/sesion/${sessionId}`);
+
         state.sessionId = sessionId;
+        state.plan = sesion.plan;
+        state.materia = sesion.materia || '';
 
-        // Buscar la sesión en las sesiones listadas
-        const sesiones = await api('/api/sesiones');
-        const sesion = sesiones.find(s => s.id === sessionId);
-
-        if (sesion) {
-            // Reconstruir un plan mínimo para la navegación
-            const totalDias = sesion.semanas * 7;
-            state.plan = {
-                titulo: sesion.titulo,
-                descripcion: `Plan de ${sesion.materia} - ${sesion.tema}`,
-                total_dias: totalDias,
-                dias: Array.from({ length: totalDias }, (_, i) => ({
-                    dia: i + 1,
-                    titulo: `Día ${i + 1}`,
-                    tipo: 'teoria',
-                    resumen: '',
-                })),
-                hitos: [],
-            };
-            mostrarPlan(state.plan);
-            toast('Sesión cargada 📂', 'success');
-        }
+        mostrarPlan(sesion.plan);
+        toast('Sesión cargada 📂', 'success');
     } catch (err) {
         toast(`Error: ${err.message}`, 'error');
     } finally {
@@ -503,27 +844,35 @@ function mostrarContenidoDia(contenido, dia) {
     // Resetear chatbot de la lección al cambiar de día
     resetChatbotLeccion();
 
+    // Mostrar/ocultar botones TTS según si es idioma
+    const esIdioma = esIdiomaExtranjero();
+
     // Título
     $('dia-titulo').textContent = `Día ${dia}: ${c.titulo || ''}`;
 
     // Explicación
-    $('dia-explicacion').innerHTML = simpleMarkdown(c.explicacion || '');
+    let explicacionHTML = simpleMarkdown(c.explicacion || '');
+    if (esIdioma) explicacionHTML = addInlineAudio(explicacionHTML);
+    $('dia-explicacion').innerHTML = explicacionHTML;
 
     // Conceptos clave
     const conceptos = c.conceptos_clave || [];
-    $('dia-conceptos').innerHTML = conceptos.map(c =>
-        `<span class="concepto-tag">${c}</span>`
-    ).join('');
+    $('dia-conceptos').innerHTML = conceptos.map(c => {
+        const tag = esIdioma ? addInlineAudio(c) : c;
+        return `<span class="concepto-tag">${tag}</span>`;
+    }).join('');
     $('seccion-conceptos').style.display = conceptos.length > 0 ? 'block' : 'none';
 
     // Ejemplos
     const ejemplos = c.ejemplos || [];
-    $('dia-ejemplos').innerHTML = ejemplos.map(ej => `
+    $('dia-ejemplos').innerHTML = ejemplos.map((ej, i) => `
         <div class="ejemplo-card">
-            <h4>${ej.titulo || 'Ejemplo'}</h4>
-            <div class="ejemplo-enunciado">${ej.enunciado || ''}</div>
-            <div class="ejemplo-desarrollo">${ej.desarrollo || ''}</div>
-            <div class="ejemplo-resultado">→ ${ej.resultado || ''}</div>
+            <div class="ejemplo-header-tts">
+                <h4>${ej.titulo || 'Ejemplo'}</h4>
+            </div>
+            <div class="ejemplo-enunciado">${esIdioma ? addInlineAudio(ej.enunciado || '') : (ej.enunciado || '')}</div>
+            <div class="ejemplo-desarrollo">${esIdioma ? addInlineAudio(ej.desarrollo || '') : (ej.desarrollo || '')}</div>
+            <div class="ejemplo-resultado">→ ${esIdioma ? addInlineAudio(ej.resultado || '') : (ej.resultado || '')}</div>
         </div>
     `).join('');
     $('seccion-ejemplos').style.display = ejemplos.length > 0 ? 'block' : 'none';
@@ -550,7 +899,7 @@ function mostrarContenidoDia(contenido, dia) {
                     <span class="ejercicio-tipo-badge badge-${tipo}">${tipoBadge[tipo] || tipo}</span>
                     <button class="btn-pista" onclick="mostrarPista(${i})">💡 Pista</button>
                 </div>
-                <div class="ejercicio-enunciado">${ej.enunciado || ''}</div>
+                <div class="ejercicio-enunciado">${esIdioma ? addInlineAudio(ej.enunciado || '') : (ej.enunciado || '')}</div>
                 <div class="ejercicio-pista" id="pista-${i}">${ej.pista || 'Sin pista disponible'}</div>
                 ${inputHTML}
                 <button class="btn btn-primary" style="margin-top:12px;" onclick="verificarRespuesta(${i})">Verificar</button>
@@ -1808,6 +2157,7 @@ function goHome() {
     cargarSesiones();
     state.sessionId = null;
     state.plan = null;
+    state.materia = null;
     state.diaActual = null;
     state.contenidoDia = null;
     state.quizActual = null;

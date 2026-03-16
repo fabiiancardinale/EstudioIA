@@ -1428,6 +1428,102 @@ body::after {
     transform: scale(1.05);
 }
 
+/* ── Botones TTS (Text-to-Speech) ───────────────── */
+.btn-tts {
+    font-size: 1rem;
+    padding: 6px 12px;
+    background: var(--info-bg);
+    color: var(--info);
+    border: 2px solid rgba(96, 165, 250, 0.3);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.btn-tts:hover {
+    background: rgba(96, 165, 250, 0.2);
+    transform: scale(1.05);
+    border-color: var(--info);
+}
+
+.btn-tts.active {
+    background: var(--info);
+    color: white;
+    animation: tts-pulse 1s ease-in-out infinite;
+}
+
+@keyframes tts-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ── Audio inline por palabra/frase extranjera ───── */
+.audio-word {
+    display: inline;
+    position: relative;
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: 600;
+    background: rgba(96, 165, 250, 0.08);
+    border-radius: 4px;
+    padding: 1px 4px;
+    transition: background 0.2s, color 0.2s;
+    border-bottom: 1.5px dashed rgba(96, 165, 250, 0.4);
+}
+
+.audio-word:hover {
+    background: rgba(96, 165, 250, 0.18);
+    border-bottom-color: var(--primary);
+}
+
+.audio-word:active {
+    background: rgba(96, 165, 250, 0.28);
+}
+
+.audio-word .audio-btn {
+    font-style: normal;
+    font-size: 0.7em;
+    margin-left: 2px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.audio-word:hover .audio-btn {
+    opacity: 1;
+}
+
+/* Cuando está reproduciendo */
+.audio-word.speaking {
+    background: rgba(96, 165, 250, 0.25);
+    border-bottom-color: var(--primary);
+    animation: audio-word-pulse 1s ease-in-out infinite;
+}
+
+@keyframes audio-word-pulse {
+    0%, 100% { background: rgba(96, 165, 250, 0.25); }
+    50% { background: rgba(96, 165, 250, 0.12); }
+}
+
+/* Header de ejemplo con TTS */
+.ejemplo-header-tts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ejemplo-header-tts h4 {
+    margin: 0;
+}
+
 /* Dato curioso */
 .dato-curioso {
     background: linear-gradient(135deg, rgba(124,92,252,0.06), rgba(244,114,182,0.04));

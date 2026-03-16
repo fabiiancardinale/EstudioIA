@@ -35,7 +35,7 @@ app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
 app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 
 ai = AIEngine()
-db = Storage(DATA_DIR)
+db = Storage()
 
 
 # ── Helper: obtener usuario autenticado ──────────────
@@ -159,12 +159,39 @@ async def generar_plan(req: PlanRequest, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ── API: Obtener sesión completa (plan guardado) ─────
+@app.get("/api/sesion/{session_id}")
+async def obtener_sesion_completa(session_id: str, request: Request):
+    user = get_current_user(request)
+    sesion = db.obtener_sesion(session_id)
+    if not sesion:
+        raise HTTPException(status_code=404, detail="Sesión no encontrada")
+    if sesion.get("user_id") and sesion["user_id"] != user.get("id"):
+        raise HTTPException(status_code=403, detail="No autorizado")
+    return {
+        "id": sesion["id"],
+        "materia": sesion["materia"],
+        "tema": sesion["tema"],
+        "semanas": sesion["semanas"],
+        "nivel": sesion["nivel"],
+        "plan": sesion["plan"],
+        "contenido_dias": sesion.get("contenido_dias", {}),
+        "progreso": sesion.get("progreso", {}),
+        "creado": sesion.get("creado"),
+    }
+
+
 # ── API: Obtener contenido de un día ─────────────────
 @app.get("/api/dia/{session_id}/{dia}")
 async def obtener_dia(session_id: str, dia: int):
     sesion = db.obtener_sesion(session_id)
     if not sesion:
         raise HTTPException(status_code=404, detail="Sesión no encontrada")
+
+    # Verificar si ya existe contenido cacheado
+    cached = db.obtener_contenido_dia(session_id, dia)
+    if cached:
+        return {"dia": dia, "contenido": cached}
 
     try:
         contenido = await ai.generar_contenido_dia(
@@ -175,6 +202,10 @@ async def obtener_dia(session_id: str, dia: int):
             dia=dia,
             progreso=sesion.get("progreso", {}),
         )
+
+        # Guardar contenido generado para no regenerarlo
+        db.guardar_contenido_dia(session_id, dia, contenido)
+
         return {"dia": dia, "contenido": contenido}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
